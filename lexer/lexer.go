@@ -1,5 +1,7 @@
 package lexer
 
+import "monkey-go/token"
+
 // Lexer is a structure that lexes a given input.
 type Lexer struct {
 	input           string
@@ -18,6 +20,41 @@ func (lexer *Lexer) consumeChar() {
 	lexer.position = lexer.readingPosition
 	lexer.readingPosition++
 
+}
+
+func (lexer *Lexer) nextToken() token.Token {
+	var t token.Token
+
+	switch lexer.currentChar {
+	case '=':
+		t = newToken(token.ASSIGN, lexer.currentChar)
+
+	case ';':
+		t = newToken(token.SEMICOLON, lexer.currentChar)
+	case '(':
+		t = newToken(token.LPAREN, lexer.currentChar)
+	case ')':
+		t = newToken(token.RPAREN, lexer.currentChar)
+	case ',':
+		t = newToken(token.COMMA, lexer.currentChar)
+	case '+':
+		t = newToken(token.PLUS, lexer.currentChar)
+	case '{':
+
+		t = newToken(token.LBRACE, lexer.currentChar)
+	case '}':
+		t = newToken(token.RBRACE, lexer.currentChar)
+	case 0:
+		t.Literal = ""
+		t.Type = token.EOF
+	}
+	lexer.consumeChar()
+
+	return t
+}
+
+func newToken(tokenType token.Type, character byte) token.Token {
+	return token.Token{Type: tokenType, Literal: string(character)}
 }
 
 // New creates a new Lexer and returns a reference to it.
