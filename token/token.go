@@ -1,9 +1,11 @@
 package token
 
-type TokenType string
+//Type is a token type
+type Type string
 
+// Token is a token
 type Token struct {
-	Type    TokenType
+	Type    Type
 	Literal string
 }
 
