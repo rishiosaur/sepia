@@ -28,6 +28,8 @@ func (lexer *Lexer) consumeChar() {
 func (lexer *Lexer) nextToken() token.Token {
 	var t token.Token
 
+	lexer.skipWhitespace()
+
 	switch lexer.currentChar {
 	case '=':
 		t = newToken(token.ASSIGN, lexer.currentChar)
@@ -53,15 +55,34 @@ func (lexer *Lexer) nextToken() token.Token {
 	default:
 		if util.IsLetter(lexer.currentChar) {
 			t.Literal = lexer.consumeIdentifier()
+			t.Type = token.LookupIdent(t.Literal)
+			return t
+		} else if util.IsDigit(lexer.currentChar) {
+			t.Literal = lexer.consumeInteger()
+			t.Type = token.INT
 			return t
 		} else {
 			t = newToken(token.ILLEGAL, lexer.currentChar)
 		}
-
 	}
 	lexer.consumeChar()
 
 	return t
+}
+
+func (lexer *Lexer) skipWhitespace() {
+	for util.IsWhitespace(lexer.currentChar) {
+		lexer.consumeChar()
+	}
+}
+
+func (lexer *Lexer) consumeInteger() string {
+	position := lexer.position
+	for util.IsDigit(lexer.currentChar) {
+		lexer.consumeChar()
+	}
+
+	return lexer.input[position:lexer.position]
 }
 
 func (lexer *Lexer) consumeIdentifier() string {
