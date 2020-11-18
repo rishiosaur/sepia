@@ -31,11 +31,8 @@ func (lexer *Lexer) nextToken() token.Token {
 	lexer.skipWhitespace()
 
 	switch lexer.currentChar {
-	case '=':
-		t = newToken(token.ASSIGN, lexer.currentChar)
 
-	case ';':
-		t = newToken(token.SEMICOLON, lexer.currentChar)
+	// One-character bytes
 	case '(':
 		t = newToken(token.LPAREN, lexer.currentChar)
 	case ')':
@@ -45,13 +42,51 @@ func (lexer *Lexer) nextToken() token.Token {
 	case '+':
 		t = newToken(token.PLUS, lexer.currentChar)
 	case '{':
-
 		t = newToken(token.LBRACE, lexer.currentChar)
 	case '}':
 		t = newToken(token.RBRACE, lexer.currentChar)
+	case '-':
+		t = newToken(token.MINUS, lexer.currentChar)
+	case '/':
+		t = newToken(token.SLASH, lexer.currentChar)
+	case '*':
+		t = newToken(token.ASTERISK, lexer.currentChar)
+	case '<':
+		t = newToken(token.LT, lexer.currentChar)
+	case '>':
+		t = newToken(token.GT, lexer.currentChar)
+
+	// EOF
 	case 0:
 		t.Literal = ""
 		t.Type = token.EOF
+
+	// Multiple-character bytes
+	case '=':
+		if lexer.peekCharacter() == '=' {
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{
+				Type:    token.EQ,
+				Literal: string(character) + string(lexer.currentChar),
+			}
+		} else {
+			t = newToken(token.ASSIGN, lexer.currentChar)
+		}
+	case '!':
+		if lexer.peekCharacter() == '=' {
+			character := lexer.currentChar
+
+			lexer.consumeChar()
+			t = token.Token{
+				Type:    token.NOT_EQ,
+				Literal: string(character) + string(lexer.currentChar),
+			}
+		} else {
+			t = newToken(token.SEMICOLON, lexer.currentChar)
+		}
+
 	default:
 		if util.IsLetter(lexer.currentChar) {
 			t.Literal = lexer.consumeIdentifier()
@@ -92,6 +127,14 @@ func (lexer *Lexer) consumeIdentifier() string {
 	}
 
 	return lexer.input[position:lexer.position]
+}
+
+func (lexer *Lexer) peekCharacter() byte {
+	if lexer.readingPosition >= len(lexer.input) {
+		return 0 // this will trigger an EOF
+	} else {
+		return lexer.input[lexer.readingPosition] // Recall that readingPosition is always one character ahead of the pos
+	}
 }
 
 func newToken(tokenType token.Type, character byte) token.Token {
