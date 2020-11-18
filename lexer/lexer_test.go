@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"fmt"
 	"monkey-go/token"
 	"testing"
 )
@@ -58,6 +59,8 @@ let result = add(five, ten);
 
 	for i, tt := range tests {
 		tok := l.nextToken()
+		fmt.Println(tok.Literal)
+		fmt.Println(tok.Type)
 		if tok.Type != tt.expectedType {
 			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q",
 				i, tt.expectedType, tok.Type)
