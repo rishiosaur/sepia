@@ -87,7 +87,7 @@ func (lexer *Lexer) NextToken() token.Token {
 				Literal: string(character) + string(lexer.currentChar),
 			}
 		} else {
-			t = newToken(token.SEMICOLON, lexer.currentChar)
+			t = newToken(token.BANG, lexer.currentChar)
 		}
 
 	default:
