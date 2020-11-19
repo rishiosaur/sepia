@@ -5,6 +5,18 @@ import (
 	"monkey-go/ast"
 	"monkey-go/lexer"
 	"monkey-go/token"
+	"strconv"
+)
+
+// PRECEDENCES
+const (
+	_ int = iota
+	LOWEST
+	EQUALS  // == LESSGREATER // > or <
+	SUM     //+
+	PRODUCT //*
+	PREFIX  //-Xor!X
+	CALL    // myFunction(X)
 )
 
 type Parser struct {
@@ -28,6 +40,9 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = make(map[token.Type]prefixParseFn)
 	p.registerPrefixFunction(token.IDENT, p.parseIdentifier)
+	p.registerPrefixFunction(token.INT, p.parseIntegerLiteral)
+	p.registerPrefixFunction(token.BANG, p.parsePrefixExpression)
+	p.registerPrefixFunction(token.MINUS, p.parsePrefixExpression)
 
 	return p
 }
@@ -58,10 +73,11 @@ func (p *Parser) expectPeek(tok token.Type) bool {
 	if p.peekTokenIs(tok) {
 		p.consumeToken()
 		return true
-	} else {
-		p.addPeekError(tok)
-		return false
 	}
+
+	p.addPeekError(tok)
+	return false
+
 }
 
 func (p *Parser) registerPrefixFunction(tokenType token.Type, fn prefixParseFn) {
@@ -90,6 +106,19 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 }
 
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	expression := &ast.PrefixExpression{
+		Token:    p.currentToken,
+		Operator: p.currentToken.Literal,
+	}
+
+	p.consumeToken()
+
+	expression.Right = p.parseExpression(PREFIX)
+
+	return expression
+}
+
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.currentToken.Type {
 	case token.LET:
@@ -100,17 +129,6 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseExpressionStatement()
 	}
 }
-
-// PRECEDENCES
-const (
-	_ int = iota
-	LOWEST
-	EQUALS  // == LESSGREATER // > or <
-	SUM     //+
-	PRODUCT //*
-	PREFIX  //-Xor!X
-	CALL    // myFunction(X)
-)
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 	stmt := &ast.ExpressionStatement{Token: p.currentToken}
@@ -125,9 +143,11 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
+
 	prefix := p.prefixParseFns[p.currentToken.Type]
 
 	if prefix == nil {
+		p.noPrefixParseFnError(p.currentToken.Type)
 		return nil
 	}
 
@@ -138,6 +158,28 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 
 func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
+}
+
+func (p *Parser) noPrefixParseFnError(tok token.Type) {
+	fmt.Println(tok)
+	msg := fmt.Sprintf("No prefix parse function for %s found", tok)
+	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	literal := &ast.IntegerLiteral{Token: p.currentToken}
+
+	value, err := strconv.ParseInt(p.currentToken.Literal, 0, 64)
+
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.currentToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+
+	}
+
+	literal.Value = value
+	return literal
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
@@ -152,8 +194,12 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
-	// TODO: parse expressions
-	for !p.currentTokenIs(token.SEMICOLON) {
+
+	p.consumeToken()
+
+	stmt.Value = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.SEMICOLON) {
 		p.consumeToken()
 	}
 
