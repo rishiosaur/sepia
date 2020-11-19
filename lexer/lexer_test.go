@@ -61,7 +61,7 @@ let result = add(five, ten);
 	l := New(input)
 
 	for i, tt := range tests {
-		tok := l.nextToken()
+		tok := l.NextToken()
 		fmt.Println(tok.Literal)
 		fmt.Println(tok.Type)
 		if tok.Type != tt.expectedType {
