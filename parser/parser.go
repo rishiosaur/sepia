@@ -35,6 +35,29 @@ func (p *Parser) consumeToken() {
 	p.readToken = p.lexer.NextToken()
 }
 
+func (p *Parser) currentTokenIs(tok token.Type) bool {
+	return p.currentToken.Type == tok
+}
+
+func (p *Parser) peekTokenIs(tok token.Type) bool {
+	return p.readToken.Type == tok
+}
+
+func (p *Parser) addPeekError(tok token.Type) {
+	msg := fmt.Sprintf("Expected next token to be %s, got %s instead", tok, p.readToken)
+	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) expectPeek(tok token.Type) bool {
+	if p.peekTokenIs(tok) {
+		p.consumeToken()
+		return true
+	} else {
+		p.addPeekError(tok)
+		return false
+	}
+}
+
 func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
@@ -57,7 +80,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.currentToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
-
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
@@ -83,25 +107,14 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	return stmt
 }
 
-func (p *Parser) currentTokenIs(tok token.Type) bool {
-	return p.currentToken.Type == tok
-}
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{Token: p.currentToken}
 
-func (p *Parser) peekTokenIs(tok token.Type) bool {
-	return p.readToken.Type == tok
-}
+	p.consumeToken()
 
-func (p *Parser) addPeekError(tok token.Type) {
-	msg := fmt.Sprintf("Expected next token to be %s, got %s instead", tok, p.readToken)
-	p.errors = append(p.errors, msg)
-}
-
-func (p *Parser) expectPeek(tok token.Type) bool {
-	if p.peekTokenIs(tok) {
+	for !p.currentTokenIs(token.SEMICOLON) {
 		p.consumeToken()
-		return true
-	} else {
-		p.addPeekError(tok)
-		return false
 	}
+
+	return stmt
 }
