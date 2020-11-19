@@ -25,7 +25,8 @@ func (lexer *Lexer) consumeChar() {
 
 }
 
-func (lexer *Lexer) nextToken() token.Token {
+// NextToken get the next token.
+func (lexer *Lexer) NextToken() token.Token {
 	var t token.Token
 
 	lexer.skipWhitespace()
@@ -55,6 +56,8 @@ func (lexer *Lexer) nextToken() token.Token {
 		t = newToken(token.LT, lexer.currentChar)
 	case '>':
 		t = newToken(token.GT, lexer.currentChar)
+	case ';':
+		t = newToken(token.SEMICOLON, lexer.currentChar)
 
 	// EOF
 	case 0:
