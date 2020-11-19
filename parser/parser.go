@@ -106,19 +106,6 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 }
 
-func (p *Parser) parsePrefixExpression() ast.Expression {
-	expression := &ast.PrefixExpression{
-		Token:    p.currentToken,
-		Operator: p.currentToken.Literal,
-	}
-
-	p.consumeToken()
-
-	expression.Right = p.parseExpression(PREFIX)
-
-	return expression
-}
-
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.currentToken.Type {
 	case token.LET:
@@ -147,6 +134,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	prefix := p.prefixParseFns[p.currentToken.Type]
 
 	if prefix == nil {
+
 		p.noPrefixParseFnError(p.currentToken.Type)
 		return nil
 	}
@@ -159,11 +147,13 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
 }
-
-func (p *Parser) noPrefixParseFnError(tok token.Type) {
-	fmt.Println(tok)
-	msg := fmt.Sprintf("No prefix parse function for %s found", tok)
-	p.errors = append(p.errors, msg)
+func (p *Parser) parsePrefixExpression() ast.Expression {
+	expression := &ast.PrefixExpression{
+		Token:    p.currentToken,
+		Operator: p.currentToken.Literal}
+	p.consumeToken()
+	expression.Right = p.parseExpression(PREFIX)
+	return expression
 }
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {
@@ -180,6 +170,11 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 
 	literal.Value = value
 	return literal
+}
+
+func (p *Parser) noPrefixParseFnError(t token.Type) {
+	msg := fmt.Sprintf("no prefix parse function for %s found", t)
+	p.errors = append(p.errors, msg)
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
