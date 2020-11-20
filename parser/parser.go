@@ -2,9 +2,9 @@ package parser
 
 import (
 	"fmt"
-	"monkey-go/ast"
-	"monkey-go/lexer"
-	"monkey-go/token"
+	"sepia/ast"
+	"sepia/lexer"
+	"sepia/token"
 	"strconv"
 )
 

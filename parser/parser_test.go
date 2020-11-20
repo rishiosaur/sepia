@@ -2,8 +2,8 @@ package parser
 
 import (
 	"fmt"
-	"monkey-go/ast"
-	"monkey-go/lexer"
+	"sepia/ast"
+	"sepia/lexer"
 	"testing"
 )
 

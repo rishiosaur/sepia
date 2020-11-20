@@ -8,6 +8,7 @@ var keywords = map[string]Type{
 	"if":     IF,
 	"else":   ELSE,
 	"return": RETURN,
+	"is":     ASSIGN,
 }
 
 //LookupIdent finds an identifier token type from a string.

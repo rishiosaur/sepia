@@ -2,7 +2,7 @@ package ast
 
 import (
 	"bytes"
-	"monkey-go/token"
+	"sepia/token"
 )
 
 type LetStatement struct {

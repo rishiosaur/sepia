@@ -1,6 +1,6 @@
 package ast
 
-import "monkey-go/token"
+import "sepia/token"
 
 type IntegerLiteral struct {
 	Token token.Token

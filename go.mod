@@ -1,3 +1,3 @@
-module monkey-go
+module sepia
 
 go 1.15

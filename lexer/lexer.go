@@ -1,8 +1,8 @@
 package lexer
 
 import (
-	"monkey-go/token"
-	"monkey-go/util"
+	"sepia/token"
+	"sepia/util"
 )
 
 // Lexer is a structure that lexes a given input.
