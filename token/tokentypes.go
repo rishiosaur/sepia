@@ -24,7 +24,7 @@ const (
 	RBRACE    = "}"
 	// Keywords
 	FUNCTION = "FUNCTION"
-	LET      = "LET"
+	VALUE    = "LET"
 	TRUE     = "TRUE"
 	FALSE    = "FALSE"
 	IF       = "IF"

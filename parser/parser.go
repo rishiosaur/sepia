@@ -160,7 +160,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.currentToken.Type {
-	case token.LET:
+	case token.VALUE:
 		return p.parseLetStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
