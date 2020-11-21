@@ -119,6 +119,7 @@ func (p *Parser) expectPeek(tok token.Type) bool {
 }
 
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
+	defer untrace(trace("parseInfixExpression"))
 	expression := &ast.InfixExpression{
 		Token:    p.currentToken,
 		Operator: p.currentToken.Literal,
@@ -159,6 +160,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 }
 
 func (p *Parser) parseStatement() ast.Statement {
+	defer untrace(trace("parseStatement"))
 	switch p.currentToken.Type {
 	case token.VALUE:
 		return p.parseLetStatement()
@@ -170,6 +172,7 @@ func (p *Parser) parseStatement() ast.Statement {
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	defer untrace(trace("parseExpressionStatement"))
 	stmt := &ast.ExpressionStatement{Token: p.currentToken}
 
 	stmt.Expression = p.parseExpression(LOWEST)
@@ -182,7 +185,7 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
-
+	defer untrace(trace("parseExpression"))
 	prefix := p.prefixParseFns[p.currentToken.Type]
 
 	if prefix == nil {
@@ -206,9 +209,11 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 }
 
 func (p *Parser) parseIdentifier() ast.Expression {
+	defer untrace(trace("parseIdentifier"))
 	return &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
 }
 func (p *Parser) parsePrefixExpression() ast.Expression {
+	defer untrace(trace("parsePrefixExpression"))
 	expression := &ast.PrefixExpression{
 		Token:    p.currentToken,
 		Operator: p.currentToken.Literal}
@@ -218,6 +223,7 @@ func (p *Parser) parsePrefixExpression() ast.Expression {
 }
 
 func (p *Parser) parseIntegerLiteral() ast.Expression {
+	defer untrace(trace("parseIntegerLiteral"))
 	literal := &ast.IntegerLiteral{Token: p.currentToken}
 
 	value, err := strconv.ParseInt(p.currentToken.Literal, 0, 64)
@@ -239,6 +245,7 @@ func (p *Parser) noPrefixParseFnError(t token.Type) {
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
+	defer untrace(trace("parseLetStatement"))
 	stmt := &ast.LetStatement{Token: p.currentToken}
 
 	if !p.expectPeek(token.IDENT) {
@@ -263,6 +270,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 }
 
 func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	defer untrace(trace("parseReturnStatement"))
 	stmt := &ast.ReturnStatement{Token: p.currentToken}
 
 	p.consumeToken()
