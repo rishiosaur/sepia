@@ -90,6 +90,23 @@ func (lexer *Lexer) NextToken() token.Token {
 			t = newToken(token.BANG, lexer.currentChar)
 		}
 
+	case '|':
+		if lexer.peekCharacter() == '>' {
+			character := lexer.currentChar
+
+			lexer.consumeChar()
+
+			t = token.Token{
+				Type:    token.VALUE,
+				Literal: string(character) + string(lexer.currentChar),
+			}
+		} else {
+			t = token.Token{
+				Type:    token.ILLEGAL,
+				Literal: string(lexer.currentChar),
+			}
+		}
+
 	default:
 		if util.IsLetter(lexer.currentChar) {
 			t.Literal = lexer.consumeIdentifier()
