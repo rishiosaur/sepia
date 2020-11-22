@@ -3,6 +3,7 @@ package token
 var keywords = map[string]Type{
 	"fn":      FUNCTION,
 	"value":   VALUE,
+	"let":     VALUE,
 	"true":    TRUE,
 	"false":   FALSE,
 	"if":      IF,
