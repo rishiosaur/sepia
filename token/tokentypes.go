@@ -30,6 +30,7 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
+	STRING   = "STRING"
 	MINUS    = "-"
 	BANG     = "!"
 	ASTERISK = "*"
