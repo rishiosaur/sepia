@@ -107,6 +107,10 @@ func (lexer *Lexer) NextToken() token.Token {
 			}
 		}
 
+	case '"':
+		t.Type = token.STRING
+		t.Literal = lexer.readString()
+
 	default:
 		if util.IsLetter(lexer.currentChar) {
 			t.Literal = lexer.consumeIdentifier()
@@ -159,6 +163,19 @@ func (lexer *Lexer) peekCharacter() byte {
 
 func newToken(tokenType token.Type, character byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(character)}
+}
+
+func (lexer *Lexer) readString() string {
+	position := lexer.position + 1
+	for {
+		lexer.consumeChar()
+
+		if lexer.currentChar == '"' || lexer.currentChar == 0 {
+			break
+		}
+	}
+
+	return lexer.input[position:lexer.position]
 }
 
 // New creates a new Lexer and returns a reference to it.
