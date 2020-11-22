@@ -29,10 +29,11 @@ func Start(in io.Reader, out io.Writer) {
 
 		// p := parser.New(l)
 
-		// program := p.ParseProgram().String()
+		// program := p.ParseProgram()
 
 		// if len(p.Errors()) == 0 {
-		// fmt.Println(program)
+		// 	fmt.Println(program.Statements)
+
 		// }
 	}
 }
