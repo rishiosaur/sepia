@@ -13,9 +13,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Hello %s! This is the Sepia programming language!\n", user.Username)
-
-	fmt.Printf("Feel free to type in commands\n")
+	fmt.Printf("Hello %s! Welcome to the Sepia programming language.!\n", user.Username)
 
 	repl.Start(os.Stdin, os.Stdout)
 }
