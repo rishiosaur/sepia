@@ -12,6 +12,8 @@ var keywords = map[string]Type{
 	"be":      ASSIGN,
 	"is":      EQ,
 	"not":     NOT_EQ,
+	"do":      LBRACE,
+	"end":     RBRACE,
 }
 
 //LookupIdent finds an identifier token type from a string.
