@@ -2,7 +2,7 @@ package lexer
 
 import (
 	"fmt"
-	"monkey-go/token"
+	"sepia/token"
 	"testing"
 )
 
