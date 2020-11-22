@@ -3,8 +3,12 @@ package evaluator
 import (
 	"sepia/ast"
 	"sepia/objects"
+)
 
-	"github.com/go-git/go-git/v5/plumbing/object"
+var (
+	TRUE  = &objects.Boolean{Value: true}
+	FALSE = &objects.Boolean{Value: false}
+	NULL  = &objects.Null{}
 )
 
 func Eval(node ast.Node) objects.Object {
@@ -17,7 +21,9 @@ func Eval(node ast.Node) objects.Object {
 
 	// Expressions
 	case *ast.IntegerLiteral:
-		return &object.Integer{Value: node.Value}
+		return &objects.Integer{Value: node.Value}
+	case *ast.BooleanLiteral:
+		return toBool(node.Value)
 
 	}
 	return nil
@@ -29,4 +35,12 @@ func evalStatements(stmts []ast.Statement) objects.Object {
 		result = Eval(statement)
 	}
 	return result
+}
+
+func toBool(input bool) *objects.Boolean {
+	if input {
+		return TRUE
+	}
+
+	return FALSE
 }
