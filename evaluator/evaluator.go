@@ -54,6 +54,8 @@ func Eval(node ast.Node, machine *objects.Machine) objects.Object {
 		}
 
 		return applyFunction(function, args)
+	case *ast.StringLiteral:
+		return &objects.String{Value: node.Value}
 
 	case *ast.PrefixExpression:
 		right := Eval(node.Right, machine)
@@ -86,13 +88,16 @@ func Eval(node ast.Node, machine *objects.Machine) objects.Object {
 }
 
 func applyFunction(fn objects.Object, args []objects.Object) objects.Object {
-	function, ok := fn.(*objects.Function)
-	if !ok {
+	switch fn := fn.(type) {
+	case *objects.Function:
+		extendedLocMachine := extendLocalMachine(fn, args)
+		evaluated := Eval(fn.Body, extendedLocMachine)
+		return unwrapReturnValue(evaluated)
+	case *objects.Builtin:
+		return fn.Fn(args...)
+	default:
 		return newError("not a function: %s", fn.Type())
 	}
-	extendedEnv := extendLocalMachine(function, args)
-	evaluated := Eval(function.Body, extendedEnv)
-	return unwrapReturnValue(evaluated)
 }
 
 func extendLocalMachine(fn *objects.Function, args []objects.Object,
@@ -168,13 +173,13 @@ func evalProgram(program *ast.Program, machine *objects.Machine) objects.Object 
 }
 
 func evalIdentifier(node *ast.Identifier, machine *objects.Machine) objects.Object {
-	val, ok := machine.Get(node.Value)
-
-	if !ok {
-		return newError("identifier not found: " + node.Value)
+	if val, ok := machine.Get(node.Value); ok {
+		return val
 	}
-
-	return val
+	if builtin, ok := builtins[node.Value]; ok {
+		return builtin
+	}
+	return newError("identifier not found: " + node.Value)
 }
 
 func evalStatements(stmts []ast.Statement, machine *objects.Machine) objects.Object {
@@ -246,11 +251,24 @@ func evalInfixExpression(
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
 			left.Type(), operator, right.Type())
+	case left.Type() == objects.STRING_OBJ && right.Type() == objects.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right)
 
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 
 	}
+}
+
+func evalStringInfixExpression(operator string,
+	left, right objects.Object,
+) objects.Object {
+	if operator != "+" {
+		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+	}
+	leftVal := left.(*objects.String).Value
+	rightVal := right.(*objects.String).Value
+	return &objects.String{Value: leftVal + rightVal}
 }
 
 func evalIntInfixExpression(
