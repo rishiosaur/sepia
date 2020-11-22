@@ -6,13 +6,15 @@ import (
 	"io"
 	"sepia/evaluator"
 	"sepia/lexer"
+	"sepia/objects"
 	"sepia/parser"
 )
 
-const prompt string = "⟖ "
+const prompt string = "§ "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	machine := objects.NewMachine()
 	for {
 		fmt.Printf(prompt)
 		scanned := scanner.Scan()
@@ -28,10 +30,10 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, machine)
 
 		if evaluated != nil {
-			io.WriteString(out, "✅ "+evaluated.Inspect())
+			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
 		}
 
@@ -39,6 +41,6 @@ func Start(in io.Reader, out io.Writer) {
 }
 func printParserErrors(out io.Writer, errors []string) {
 	for _, msg := range errors {
-		io.WriteString(out, "❌ ERROR: "+msg+"\n")
+		io.WriteString(out, "❌ PARSE ERROR: "+msg+"\n")
 	}
 }
