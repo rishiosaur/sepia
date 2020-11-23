@@ -44,19 +44,14 @@ func main() {
 			printParserErrors(os.Stdout, p.Errors())
 			return
 		}
+
 		evaluator.Eval(program, machine)
-
-		// evaluated := evaluator.Eval(program, machine)
-
-		// if evaluated != nil {
-		// 	io.WriteString(os.Stdout, evaluated.Inspect())
-		// 	io.WriteString(os.Stdout, "\n")
-		// }
 	}
 }
 
 func printParserErrors(out io.Writer, errors []string) {
 	for _, msg := range errors {
-		io.WriteString(out, "❌ PARSE ERROR: "+msg+"\n")
+		_, err := io.WriteString(out, "❌ PARSE ERROR: "+msg+"\n")
+		check(err)
 	}
 }

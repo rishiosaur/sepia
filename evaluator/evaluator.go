@@ -20,7 +20,7 @@ func Eval(node ast.Node, machine *objects.Machine) objects.Object {
 	switch node := node.(type) {
 	// Statements
 	case *ast.Program:
-		return evalStatements(node.Statements, machine)
+		return evalProgram(node, machine)
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, machine)
 	case *ast.ReturnStatement:
@@ -182,17 +182,17 @@ func evalIdentifier(node *ast.Identifier, machine *objects.Machine) objects.Obje
 	return newError("identifier not found: " + node.Value)
 }
 
-func evalStatements(stmts []ast.Statement, machine *objects.Machine) objects.Object {
-	var result objects.Object
-	for _, statement := range stmts {
-		result = Eval(statement, machine)
+// func evalStatements(stmts []ast.Statement, machine *objects.Machine) objects.Object {
+// 	var result objects.Object
+// 	for _, statement := range stmts {
+// 		result = Eval(statement, machine)
 
-		if returnValue, ok := result.(*objects.ReturnValue); ok {
-			return returnValue.Value
-		}
-	}
-	return result
-}
+// 		if returnValue, ok := result.(*objects.ReturnValue); ok {
+// 			return returnValue.Value
+// 		}
+// 	}
+// 	return result
+// }
 
 func toBool(input bool) *objects.Boolean {
 	if input {
@@ -303,6 +303,7 @@ func evalIntInfixExpression(
 
 func evalIfExpression(ifExp *ast.IfExpression, machine *objects.Machine) objects.Object {
 	condition := Eval(ifExp.Condition, machine)
+
 	if isError(condition) {
 		return condition
 	}

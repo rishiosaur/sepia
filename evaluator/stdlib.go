@@ -45,7 +45,7 @@ var builtins = map[string]*objects.Builtin{
 
 			switch arg := args[0].(type) {
 			case *objects.String:
-				fmt.Print(arg.Value)
+				fmt.Println(arg.Inspect())
 				return arg
 			default:
 				return newError("argument to `print` not supported, got %s; string required.", args[0].Type())

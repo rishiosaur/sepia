@@ -12,7 +12,7 @@ end
 value i = 0
 
 value fn = f() ->
-    val i = i+1
+    value i = i+1
 end
 
 value isTrue = f() ->
@@ -20,3 +20,4 @@ value isTrue = f() ->
 end
 
 print(string(while(isTrue, fn)))
+print(string(i))
