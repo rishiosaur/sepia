@@ -2,8 +2,7 @@ package token
 
 var keywords = map[string]Type{
 	"f":       FUNCTION,
-	"value":   VALUE,
-	"let":     VALUE,
+	"val":     VALUE,
 	"true":    TRUE,
 	"false":   FALSE,
 	"if":      IF,
