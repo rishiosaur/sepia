@@ -76,10 +76,9 @@ func (lexer *Lexer) NextToken() token.Token {
 		for lexer.peekCharacter() != '\n' && lexer.peekCharacter() != 0 {
 			lexer.consumeChar()
 		}
-
+		lexer.skipWhitespace()
 		lexer.consumeChar()
-		lexer.consumeChar()
-		t = lexer.NextToken()
+		return lexer.NextToken()
 
 	// EOF
 	case 0:
