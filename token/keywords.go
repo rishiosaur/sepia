@@ -1,18 +1,16 @@
 package token
 
 var keywords = map[string]Type{
-	"f":       FUNCTION,
-	"val":     VALUE,
-	"true":    TRUE,
-	"false":   FALSE,
-	"if":      IF,
-	"else":    ELSE,
-	"return":  RETURN,
-	"defined": ASSIGN,
-	"be":      ASSIGN,
-	"is":      EQ,
-	"not":     NOT_EQ,
-	"end":     CLOSEBLOCK,
+	"f":      FUNCTION,
+	"val":    VALUE,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
+	"is":     EQ,
+	"not":    NOT_EQ,
+	"end":    CLOSEBLOCK,
 }
 
 //LookupIdent finds an identifier token type from a string.

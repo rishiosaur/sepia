@@ -8,30 +8,6 @@ import (
 	"strconv"
 )
 
-// PRECEDENCES
-const (
-	_ int = iota
-	LOWEST
-	EQUALS      // ==
-	LESSGREATER // > or <
-	SUM         //+
-	PRODUCT     //*
-	PREFIX      //-Xor!X
-	CALL        // myFunction(X)
-)
-
-var precedences = map[token.Type]int{
-	token.EQ:       EQUALS,
-	token.NOT_EQ:   EQUALS,
-	token.LT:       LESSGREATER,
-	token.GT:       LESSGREATER,
-	token.PLUS:     SUM,
-	token.MINUS:    SUM,
-	token.ASTERISK: PRODUCT,
-	token.SLASH:    PRODUCT,
-	token.LPAREN:   CALL,
-}
-
 type Parser struct {
 	lexer *lexer.Lexer
 
