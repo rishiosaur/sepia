@@ -1,7 +1,11 @@
 ![](assets/banner.png)
-# Sepia
+# 🌇 Sepia
 ![build](https://github.com/rishiosaur/sepia/workflows/build/badge.svg)
 ![lint](https://github.com/rishiosaur/sepia/workflows/lint/badge.svg)
+![GitHub](https://img.shields.io/github/license/rishiosaur/sepia)
+![GitHub issues](https://img.shields.io/github/issues/rishiosaur/sepia)
+![GitHub contributors](https://img.shields.io/github/contributors/rishiosaur/sepia)
+![GitHub last commit](https://img.shields.io/github/last-commit/rishiosaur/sepia)
 
 A minimal functional programming language.
 
