@@ -1,4 +1,4 @@
-val while = f(whileTrue, doFunc) ->
+value while = f(whileTrue, doFunc) ->
    if (whileTrue()) ->
        doFunc()
        while(whileTrue, doFunc)
@@ -9,13 +9,13 @@ val while = f(whileTrue, doFunc) ->
    end
 end
 
-val i = 0
+value i = 0
 
-val fn = f() ->
+value fn = f() ->
     val i = i+1
 end
 
-val isTrue = f() ->
+value isTrue = f() ->
     i < 2
 end
 

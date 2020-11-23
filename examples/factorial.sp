@@ -1,6 +1,6 @@
 # A standard factorial implementation.
 
-val factorial = f(n) ->
+value factorial = f(n) ->
     if (n < 0) ->
         -1
     end
@@ -16,6 +16,6 @@ val factorial = f(n) ->
     end
 end
 
-val n = 16
+value n = 16
 
 factorial(n)
