@@ -21,7 +21,7 @@ builds:
 brews:
   - tap:
       owner: rishiosaur
-      name: taps
+      name: homebrew-taps
     folder: Formula
     homepage: 'https://github.com/rishiosaur/sepia'
     description: 'A minimal interpreted language.'
