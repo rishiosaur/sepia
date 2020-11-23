@@ -1,4 +1,4 @@
-![](assets/banner.png)
+![](assets/banner.svg)
 # 🌇 Sepia
 ![build](https://github.com/rishiosaur/sepia/workflows/build/badge.svg)
 ![lint](https://github.com/rishiosaur/sepia/workflows/lint/badge.svg)
