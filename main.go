@@ -44,13 +44,14 @@ func main() {
 			printParserErrors(os.Stdout, p.Errors())
 			return
 		}
+		evaluator.Eval(program, machine)
 
-		evaluated := evaluator.Eval(program, machine)
+		// evaluated := evaluator.Eval(program, machine)
 
-		if evaluated != nil {
-			io.WriteString(os.Stdout, evaluated.Inspect())
-			io.WriteString(os.Stdout, "\n")
-		}
+		// if evaluated != nil {
+		// 	io.WriteString(os.Stdout, evaluated.Inspect())
+		// 	io.WriteString(os.Stdout, "\n")
+		// }
 	}
 }
 
