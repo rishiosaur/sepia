@@ -1,3 +1,5 @@
+# A standard factorial implementation.
+
 val factorial = f(n) ->
     if (n < 0) ->
         return -1;
@@ -16,4 +18,4 @@ end
 
 val n = 16
 
-factorial(n) # Factorial
+factorial(n)
