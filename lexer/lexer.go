@@ -52,7 +52,7 @@ func (lexer *Lexer) NextToken() token.Token {
 			lexer.consumeChar()
 
 			t = token.Token{
-				Type:    token.LBRACE,
+				Type:    token.OPENBLOCK,
 				Literal: string(character) + string(lexer.currentChar),
 			}
 		} else {
