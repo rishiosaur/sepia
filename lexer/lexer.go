@@ -72,6 +72,15 @@ func (lexer *Lexer) NextToken() token.Token {
 	case ':':
 		t = newToken(token.COLON, lexer.currentChar)
 
+	case '#':
+		for lexer.peekCharacter() != '\n' && lexer.peekCharacter() != 0 {
+			lexer.consumeChar()
+		}
+
+		lexer.consumeChar()
+		lexer.consumeChar()
+		t = lexer.NextToken()
+
 	// EOF
 	case 0:
 		t.Literal = ""
