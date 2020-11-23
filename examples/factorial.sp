@@ -2,16 +2,16 @@
 
 val factorial = f(n) ->
     if (n < 0) ->
-        return -1;
+        -1
     end
     
     else ->
         if (n == 0) ->
-            return 1;
+            1
         end
 
         else ->
-            return (n * factorial(n - 1));
+            (n * factorial(n - 1))
         end
     end
 end
