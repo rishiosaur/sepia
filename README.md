@@ -25,23 +25,25 @@ I've also designed a minimal VSC toolset around Sepia, which you can find [on th
 
 ---
 
-## Design Goals
+## 🎨 Design Goals
 Sepia started off as a project to get to learn interpreters in-depth in as short a timeframe as possible (I'll always remember those 20 hours).
 
 However, it ended up being an idealized version of what I believe programming languages should be: it's a project that's aimed squarely at replacing some of the more well-known languages in my workflow.
 
-### Readability.
+### 📚 Readability.
 
 I'm sick and tired of programming languages not being intuitive to write. Whether that be understanding the way that `this` works in JS or figuring out why type checking syntax is the way it is in Go, nearly every major programming language has some unintuitive piece of it.
 
 Sepia aims to replace every bit of unclear syntax with something that makes sense (usually borrowed from a *mathematical* convention). Every piece of syntax and semantic should have some reason for its implementation.
 
-### Functionality (alternatively, the destruction of OOP).
+### 🛠 Functionality (alternatively, the destruction of OOP).
 
 I've always hated the notion of classes and methods 'on' types: it's obtuse, and doesn't lead to great generalizations.
 
 That's why structures are exactly (and exclusively) what they sound like: a type that defines the structure of data. All functions that're supposed to work 'on' those types are just functions with an argument that requires that type. This not only means that parsing is easier, strong typing is available WHEN NEEDED, and programs execute faster, but it's also a *lot* easier to understand, and allows for incredible generalizations.
 
-### Minimalism.
+### 👁 Minimalism.
 
 When possible, Sepia tries to reuse existing syntax or keywords, and places a focus on clever algorithmic work and efficiency (wrapping the interpreter in Go gives Sepia easy concurrency for asynchronous applications): it doesn't even have loops!
+
+---
