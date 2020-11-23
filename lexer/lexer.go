@@ -47,7 +47,18 @@ func (lexer *Lexer) NextToken() token.Token {
 	case '}':
 		t = newToken(token.RBRACE, lexer.currentChar)
 	case '-':
-		t = newToken(token.MINUS, lexer.currentChar)
+		if lexer.peekCharacter() == '>' {
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{
+				Type:    token.LBRACE,
+				Literal: string(character) + string(lexer.currentChar),
+			}
+		} else {
+			t = newToken(token.MINUS, lexer.currentChar)
+		}
+
 	case '/':
 		t = newToken(token.SLASH, lexer.currentChar)
 	case '*':
@@ -58,6 +69,8 @@ func (lexer *Lexer) NextToken() token.Token {
 		t = newToken(token.GT, lexer.currentChar)
 	case ';':
 		t = newToken(token.SEMICOLON, lexer.currentChar)
+	case ':':
+		t = newToken(token.COLON, lexer.currentChar)
 
 	// EOF
 	case 0:
