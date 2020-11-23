@@ -93,8 +93,16 @@ func (e *Machine) Get(name string) (Object, bool) {
 }
 
 func (e *Machine) Set(name string, val Object) Object {
+	_, ok := e.store[name]
+
+	if !ok && e.outer != nil {
+		e.outer.store[name] = val
+		return val
+	}
+
 	e.store[name] = val
 	return val
+
 }
 
 type Function struct {
