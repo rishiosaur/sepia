@@ -23,6 +23,8 @@ Clone `rishiosaur/sepia`, then change directories into the cloned directory. Run
 
 I've also designed a minimal VSC toolset around Sepia, which you can find [on the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=rishiosaur.sepia).
 
+---
+
 ## Design Goals
 Sepia started off as a project to get to learn interpreters in-depth in as short a timeframe as possible (I'll always remember those 20 hours).
 
