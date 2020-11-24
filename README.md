@@ -21,7 +21,7 @@ Clone `rishiosaur/sepia`, then change directories into the cloned directory. Run
 
 ### VS Code Extension
 
-I've also designed a minimal VSC toolset around Sepia, which you can find [on the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=rishiosaur.sepia).
+I've also designed a VSC toolset around Sepia, which you can find [on the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=rishiosaur.sepia).
 
 ---
 
