@@ -40,6 +40,7 @@ func (ls *UpdateStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *UpdateStatement) String() string {
 	var out bytes.Buffer
 
+	// update
 	out.WriteString(ls.TokenLiteral() + " ")
 	out.WriteString(ls.Name.String())
 	out.WriteString(" = ")
