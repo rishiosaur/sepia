@@ -49,6 +49,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfixFunction(token.NOT_EQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.LT, p.parseInfixExpression)
 	p.registerInfixFunction(token.GT, p.parseInfixExpression)
+	p.registerInfixFunction(token.LTEQ, p.parseInfixExpression)
+	p.registerInfixFunction(token.GTEQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.LPAREN, p.parseCallExpression)
 
 	return p
@@ -252,6 +254,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.currentToken.Type {
 	case token.VALUE:
 		return p.parseLetStatement()
+	case token.UPDATE:
+		return p.parseUpdateStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
 	default:
@@ -290,6 +294,25 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	defer untrace(trace("parseLetStatement"))
 	stmt := &ast.LetStatement{Token: p.currentToken}
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+	stmt.Name = &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
+
+	if !p.expectPeek(token.ASSIGN) {
+		return nil
+	}
+	p.consumeToken()
+	stmt.Value = p.parseExpression(LOWEST)
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.consumeToken()
+	}
+	return stmt
+}
+
+func (p *Parser) parseUpdateStatement() *ast.UpdateStatement {
+	defer untrace(trace("parseUpdateStatement"))
+	stmt := &ast.UpdateStatement{Token: p.currentToken}
 	if !p.expectPeek(token.IDENT) {
 		return nil
 	}
