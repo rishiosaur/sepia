@@ -3,6 +3,7 @@ package objects
 import (
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"sepia/ast"
 	"strings"
 )
@@ -19,6 +20,7 @@ const (
 	STRING_OBJ       = "STRING"
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
+	MAP_OBJ          = "MAP"
 )
 
 type BuiltinFunc func(args ...Object) Object
@@ -159,5 +161,62 @@ func (a *Array) Inspect() string {
 	out.WriteString("[")
 	out.WriteString(strings.Join(elements, ", "))
 	out.WriteString("]")
+	return out.String()
+}
+
+type MapKey struct {
+	Type  ObjectType
+	Value uint
+}
+
+type Mappable interface {
+	MapKey() MapKey
+}
+
+func (b *Boolean) MapKey() MapKey {
+	var value uint
+
+	if b.Value {
+		value = 1
+	} else {
+		value = 0
+	}
+
+	return MapKey{Type: b.Type(), Value: value}
+}
+
+func (i *Integer) MapKey() MapKey {
+	return MapKey{Type: i.Type(), Value: uint(i.Value)}
+}
+
+func (s *String) MapKey() MapKey {
+	h := fnv.New64a()
+	_, ok := h.Write([]byte(s.Value))
+	if ok != nil {
+		panic("could not hash string `" + s.Value + "`")
+	}
+	return MapKey{Type: s.Type(), Value: uint(h.Sum64())}
+}
+
+type MapPair struct {
+	Key   Object
+	Value Object
+}
+
+type Map struct {
+	Pairs map[MapKey]MapPair
+}
+
+func (h *Map) Type() ObjectType { return MAP_OBJ }
+
+func (h *Map) Inspect() string {
+	var out bytes.Buffer
+	pairs := []string{}
+	for _, pair := range h.Pairs {
+		pairs = append(pairs, fmt.Sprintf("%s: %s", pair.Key.Inspect(), pair.Value.Inspect()))
+	}
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
 	return out.String()
 }
