@@ -163,6 +163,7 @@ func isError(obj objects.Object) bool {
 
 	return false
 }
+
 func evalProgram(program *ast.Program, machine *objects.Machine) objects.Object {
 	var result objects.Object
 
@@ -255,7 +256,7 @@ func evalInfixExpression(
 		return toBool(left == right)
 	case operator == "!=":
 		return toBool(left != right)
-	case operator == "||" && left.Type() == objects.BOOLEAN_OBJ && right.Type() == objects.BOOLEAN_OBJ:
+	case (operator == "||" || operator == "or") && left.Type() == objects.BOOLEAN_OBJ && right.Type() == objects.BOOLEAN_OBJ:
 		leftb, lok := strconv.ParseBool(left.Inspect())
 		if lok != nil {
 			return newError("could not change left value %s to boolean.", left.Inspect())
@@ -265,7 +266,7 @@ func evalInfixExpression(
 			return newError("could not change right value %s to boolean.", left.Inspect())
 		}
 		return toBool(leftb || rightb)
-	case operator == "&&" && left.Type() == objects.BOOLEAN_OBJ && right.Type() == objects.BOOLEAN_OBJ:
+	case (operator == "&&" || operator == "and") && left.Type() == objects.BOOLEAN_OBJ && right.Type() == objects.BOOLEAN_OBJ:
 		leftb, lok := strconv.ParseBool(left.Inspect())
 		if lok != nil {
 			return newError("could not change left value %s to boolean.", left.Inspect())
