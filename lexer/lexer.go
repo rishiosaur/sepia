@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"sepia/token"
 	"sepia/util"
 )
@@ -185,8 +184,6 @@ func (lexer *Lexer) NextToken() token.Token {
 		case '|':
 			character := lexer.currentChar
 			lexer.consumeChar()
-
-			fmt.Println("thing")
 
 			t = token.Token{
 				Type:    token.OR,
