@@ -337,6 +337,25 @@ func (p *Parser) parseUpdateStatement() *ast.UpdateStatement {
 	return stmt
 }
 
+func (p *Parser) parseUpdateStatement() *ast.UpdateStatement {
+	defer untrace(trace("parseUpdateStatement"))
+	stmt := &ast.UpdateStatement{Token: p.currentToken}
+	if !p.expectPeek(token.IDENT) {
+		return nil
+	}
+	stmt.Name = &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
+
+	if !p.expectPeek(token.ASSIGN) {
+		return nil
+	}
+	p.consumeToken()
+	stmt.Value = p.parseExpression(LOWEST)
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.consumeToken()
+	}
+	return stmt
+}
+
 //
 // PARSING/EXPRESSIONS
 //
