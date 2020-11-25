@@ -191,7 +191,10 @@ func (i *Integer) MapKey() MapKey {
 
 func (s *String) MapKey() MapKey {
 	h := fnv.New64a()
-	h.Write([]byte(s.Value))
+	_, ok := h.Write([]byte(s.Value))
+	if ok != nil {
+		panic("could not hash string `" + s.Value + "`")
+	}
 	return MapKey{Type: s.Type(), Value: uint(h.Sum64())}
 }
 
