@@ -61,6 +61,10 @@ func (lexer *Lexer) NextToken() token.Token {
 		t = newToken(token.LBRACE, lexer.currentChar)
 	case '}':
 		t = newToken(token.RBRACE, lexer.currentChar)
+	case '[':
+		t = newToken(token.LBRACKET, lexer.currentChar)
+	case ']':
+		t = newToken(token.RBRACKET, lexer.currentChar)
 	case '-':
 
 		switch lexer.peekCharacter() {

@@ -88,6 +88,26 @@ func Eval(node ast.Node, machine *objects.Machine) objects.Object {
 		params := node.Parameters
 		body := node.Body
 		return &objects.Function{Parameters: params, Machine: machine, Body: body}
+
+	case *ast.ArrayLiteral:
+
+		elements := evalExpressions(node.Elements, machine)
+		if len(elements) == 1 && isError(elements[0]) {
+			return elements[0]
+		}
+		return &objects.Array{Elements: elements}
+
+	case *ast.IndexExpression:
+
+		left := Eval(node.Left, machine)
+		if isError(left) {
+			return left
+		}
+		index := Eval(node.Index, machine)
+		if isError(index) {
+			return index
+		}
+		return evalIndexExpression(left, index)
 	default:
 		return newError("I literally have no clue wtf that is. RTFM pls.")
 	}
@@ -188,6 +208,28 @@ func evalIdentifier(node *ast.Identifier, machine *objects.Machine) objects.Obje
 		return builtin
 	}
 	return newError("identifier not found: " + node.Value)
+}
+
+func evalIndexExpression(left, index objects.Object) objects.Object {
+	switch {
+	case left.Type() == objects.ARRAY_OBJ && index.Type() == objects.INTEGER_OBJ:
+		return evalArrayIndexExpression(left, index)
+	default:
+		return newError("index operator not supported: %s", left.Type())
+	}
+}
+
+func evalArrayIndexExpression(array, index objects.Object) objects.Object {
+	arr := array.(*objects.Array)
+	idx := index.(*objects.Integer).Value
+	max := int64(len(arr.Elements) - 1)
+
+	// TODO: Allow negative operators
+	if idx < 0 || idx > max {
+		return NULL
+	}
+
+	return arr.Elements[idx]
 }
 
 // func evalStatements(stmts []ast.Statement, machine *objects.Machine) objects.Object {
