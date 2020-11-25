@@ -61,6 +61,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfixFunction(token.LTEQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.GTEQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.LPAREN, p.parseCallExpression)
+	p.registerInfixFunction(token.LBRACKET, p.parseIndexExpression)
 
 	return p
 }
@@ -483,4 +484,18 @@ func (p *Parser) parseExpressionList(end token.Type) []ast.Expression {
 	}
 
 	return exps
+}
+
+func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
+	indexExp := &ast.IndexExpression{Left: left, Token: p.currentToken}
+
+	p.consumeToken()
+
+	indexExp.Index = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+
+	return indexExp
 }
