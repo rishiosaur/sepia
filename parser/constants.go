@@ -6,7 +6,8 @@ import "sepia/token"
 const (
 	_ int = iota
 	LOWEST
-	ANDOR
+	AND
+	OR
 	EQUALS      // ==
 	LESSGREATER // > or <
 
@@ -23,8 +24,8 @@ var precedences = map[token.Type]int{
 	token.GT:       LESSGREATER,
 	token.LTEQ:     LESSGREATER,
 	token.GTEQ:     LESSGREATER,
-	token.OR:       ANDOR,
-	token.AND:      ANDOR,
+	token.OR:       OR,
+	token.AND:      AND,
 	token.PLUS:     SUM,
 	token.MINUS:    SUM,
 	token.ASTERISK: PRODUCT,
