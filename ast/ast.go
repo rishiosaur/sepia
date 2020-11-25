@@ -191,8 +191,8 @@ type ArrayLiteral struct {
 	Elements []Expression
 }
 
-func (a *ArrayLiteral) expressionNode() {}
-func (a *ArrayLiteral) TokenLiteral()   { return a.Token.Literal }
+func (a *ArrayLiteral) expressionNode()      {}
+func (a *ArrayLiteral) TokenLiteral() string { return a.Token.Literal }
 func (a *ArrayLiteral) String() string {
 	var out bytes.Buffer
 
@@ -206,15 +206,15 @@ func (a *ArrayLiteral) String() string {
 	return out.String()
 }
 
-type ArrayIndexExpression struct {
+type IndexExpression struct {
 	Token token.Token
 	Left  Expression
 	Index Expression
 }
 
-func (ie *ArrayIndexExpression) expressionNode()      {}
-func (ie *ArrayIndexExpression) TokenLiteral() string { return ie.Token.Literal }
-func (ie *ArrayIndexExpression) String() string {
+func (ie *IndexExpression) expressionNode()      {}
+func (ie *IndexExpression) TokenLiteral() string { return ie.Token.Literal }
+func (ie *IndexExpression) String() string {
 	var out bytes.Buffer
 	out.WriteString("")
 	out.WriteString(ie.Left.String())
