@@ -93,14 +93,23 @@ func (e *Machine) Get(name string) (Object, bool) {
 }
 
 func (e *Machine) Set(name string, val Object) Object {
+
+	e.store[name] = val
+	return val
+
+}
+
+func (e *Machine) Update(name string, val Object) Object {
 	_, ok := e.store[name]
 
 	if !ok && e.outer != nil {
-		e.outer.store[name] = val
-		return val
+		e.outer.Update(name, val)
+	} else if !ok && e.outer == nil {
+		return &Error{Message: "Could not find identitier `" + name + "` in program."}
+	} else {
+		e.store[name] = val
 	}
 
-	e.store[name] = val
 	return val
 
 }
