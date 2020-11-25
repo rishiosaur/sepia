@@ -1,11 +1,11 @@
 ![](assets/banner.svg)
 # 🌇 Sepia
-![build](https://github.com/rishiosaur/sepia/workflows/build/badge.svg)
-![lint](https://github.com/rishiosaur/sepia/workflows/lint/badge.svg)
-![GitHub](https://img.shields.io/github/license/rishiosaur/sepia)
-![GitHub issues](https://img.shields.io/github/issues/rishiosaur/sepia)
-![GitHub contributors](https://img.shields.io/github/contributors/rishiosaur/sepia)
-![GitHub last commit](https://img.shields.io/github/last-commit/rishiosaur/sepia)
+![Github Build status](https://img.shields.io/github/workflow/status/rishiosaur/sepia/build?event=push&style=flat-square)
+![GitHub Workflow Status (event)](https://img.shields.io/github/workflow/status/rishiosaur/sepia/lint?event=push&label=lint&style=flat-square)
+![GitHub](https://img.shields.io/github/license/rishiosaur/sepia?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/rishiosaur/sepia?style=flat-square)
+![GitHub contributors](https://img.shields.io/github/contributors/rishiosaur/sepia?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/rishiosaur/sepia?style=flat-square)
 
 A minimal functional programming language.
 
