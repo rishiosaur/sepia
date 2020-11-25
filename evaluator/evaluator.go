@@ -37,6 +37,12 @@ func Eval(node ast.Node, machine *objects.Machine) objects.Object {
 			return val
 		}
 		machine.Set(node.Name.Value, val)
+	case *ast.UpdateStatement:
+		val := Eval(node.Value, machine)
+		if isError(val) {
+			return val
+		}
+		machine.Update(node.Name.Value, val)
 
 	// Expressions
 	case *ast.IntegerLiteral:
@@ -291,6 +297,10 @@ func evalIntInfixExpression(
 		return toBool(leftVal < rightVal)
 	case ">":
 		return toBool(leftVal > rightVal)
+	case "<=":
+		return toBool(leftVal <= rightVal)
+	case ">=":
+		return toBool(leftVal >= rightVal)
 	case "==":
 		return toBool(leftVal == rightVal)
 	case "!=":
