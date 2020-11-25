@@ -1,13 +1,13 @@
 
 value while = f(whileTrue, doFunc) ->
-   if (whileTrue()) ->
+    if (whileTrue()) ->
        doFunc()
        while(whileTrue, doFunc)
     end
 
-   else ->
+    else ->
        true
-       end
+    end
 end
 
 value i = 0

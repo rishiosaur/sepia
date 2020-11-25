@@ -20,7 +20,6 @@ func check(e error) {
 }
 
 func main() {
-
 	if len(os.Args) == 1 {
 		user, err := user.Current()
 		check(err)

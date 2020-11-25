@@ -26,17 +26,7 @@ var builtins = map[string]*objects.Builtin{
 				return newError("Wrong number of arguments supplied. got=%d, want=1", len(args))
 			}
 
-			switch arg := args[0].(type) {
-			case *objects.Boolean:
-				return &objects.String{Value: fmt.Sprintf("%T", arg.Value)}
-
-			case *objects.Integer:
-				return &objects.String{Value: "int"}
-			case *objects.String:
-				return &objects.String{Value: fmt.Sprintf("%T", arg.Value)}
-			default:
-				return newError("argument to `typeof` not supported, got %s", args[0].Type())
-			}
+			return &objects.String{Value: string(args[0].Type())}
 		},
 	},
 	"print": &objects.Builtin{
