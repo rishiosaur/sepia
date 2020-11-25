@@ -42,6 +42,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefixFunction(token.IF, p.parseIfExpression)
 	p.registerPrefixFunction(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefixFunction(token.STRING, p.parseString)
+	p.registerPrefixFunction(token.LBRACE, p.parseMapLiteral)
 
 	p.infixParseFns = make(map[token.Type]infixParseFn)
 	p.registerInfixFunction(token.PLUS, p.parseInfixExpression)
@@ -260,6 +261,38 @@ func (p *Parser) parseArrayLiteral() ast.Expression {
 	array.Elements = p.parseExpressionList(token.RBRACKET)
 
 	return array
+}
+
+func (p *Parser) parseMapLiteral() ast.Expression {
+	mapLit := &ast.MapLiteral{Token: p.currentToken}
+	mapLit.Pairs = make(map[ast.Expression]ast.Expression)
+
+	for !p.peekTokenIs(token.RBRACE) {
+		p.consumeToken()
+		key := p.parseExpression(LOWEST)
+
+		if !p.expectPeek(token.COLON) {
+			return nil
+		}
+
+		p.consumeToken()
+
+		value := p.parseExpression(LOWEST)
+
+		mapLit.Pairs[key] = value
+
+		if !p.peekTokenIs(token.RBRACE) && !p.expectPeek(token.COMMA) {
+			return nil
+		}
+
+	}
+
+	if !p.expectPeek(token.RBRACE) {
+		return nil
+	}
+
+	return mapLit
+
 }
 
 //
