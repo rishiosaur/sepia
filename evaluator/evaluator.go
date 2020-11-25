@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sepia/ast"
 	"sepia/objects"
+	"strconv"
 )
 
 func newError(format string, a ...interface{}) *objects.Error {
@@ -31,7 +32,7 @@ func Eval(node ast.Node, machine *objects.Machine) objects.Object {
 		return &objects.ReturnValue{Value: val}
 	case *ast.BlockStatement:
 		return evalBlockStatement(node, machine)
-	case *ast.LetStatement:
+	case *ast.ValueStatement:
 		val := Eval(node.Value, machine)
 		if isError(val) {
 			return val
@@ -233,6 +234,7 @@ func evalNegationOpExpression(right objects.Object) objects.Object {
 }
 
 func evalMinusOpExpression(right objects.Object) objects.Object {
+
 	if right.Type() != objects.INTEGER_OBJ {
 		return newError("unknown operator: -%s", right.Type())
 	}
@@ -253,6 +255,26 @@ func evalInfixExpression(
 		return toBool(left == right)
 	case operator == "!=":
 		return toBool(left != right)
+	case operator == "||" && left.Type() == objects.BOOLEAN_OBJ && right.Type() == objects.BOOLEAN_OBJ:
+		leftb, lok := strconv.ParseBool(left.Inspect())
+		if lok != nil {
+			return newError("could not change left value %s to boolean.", left.Inspect())
+		}
+		rightb, rok := strconv.ParseBool(right.Inspect())
+		if rok != nil {
+			return newError("could not change right value %s to boolean.", left.Inspect())
+		}
+		return toBool(leftb || rightb)
+	case operator == "&&" && left.Type() == objects.BOOLEAN_OBJ && right.Type() == objects.BOOLEAN_OBJ:
+		leftb, lok := strconv.ParseBool(left.Inspect())
+		if lok != nil {
+			return newError("could not change left value %s to boolean.", left.Inspect())
+		}
+		rightb, rok := strconv.ParseBool(right.Inspect())
+		if rok != nil {
+			return newError("could not change right value %s to boolean.", left.Inspect())
+		}
+		return toBool(leftb && rightb)
 
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
