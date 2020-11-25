@@ -41,13 +41,30 @@ func (lexer *Lexer) NextToken() token.Token {
 	case ',':
 		t = newToken(token.COMMA, lexer.currentChar)
 	case '+':
-		t = newToken(token.PLUS, lexer.currentChar)
+		switch lexer.peekCharacter() {
+		case '=':
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{Type: token.PLUSEQ,
+				Literal: string(character) + string(lexer.currentChar)}
+		case '+':
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{Type: token.INCREMENT,
+				Literal: string(character) + string(lexer.currentChar)}
+		default:
+			t = newToken(token.MINUS, lexer.currentChar)
+		}
 	case '{':
 		t = newToken(token.LBRACE, lexer.currentChar)
 	case '}':
 		t = newToken(token.RBRACE, lexer.currentChar)
 	case '-':
-		if lexer.peekCharacter() == '>' {
+
+		switch lexer.peekCharacter() {
+		case '>':
 			character := lexer.currentChar
 			lexer.consumeChar()
 
@@ -55,14 +72,45 @@ func (lexer *Lexer) NextToken() token.Token {
 				Type:    token.OPENBLOCK,
 				Literal: string(character) + string(lexer.currentChar),
 			}
-		} else {
+		case '=':
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{Type: token.MINUSEQ,
+				Literal: string(character) + string(lexer.currentChar)}
+		case '-':
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{Type: token.DECREMENT,
+				Literal: string(character) + string(lexer.currentChar)}
+		default:
 			t = newToken(token.MINUS, lexer.currentChar)
+
 		}
 
 	case '/':
-		t = newToken(token.SLASH, lexer.currentChar)
+		switch lexer.peekCharacter() {
+		case '=':
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{Type: token.SLASHEQ,
+				Literal: string(character) + string(lexer.currentChar)}
+		default:
+			t = newToken(token.SLASH, lexer.currentChar)
+		}
 	case '*':
-		t = newToken(token.ASTERISK, lexer.currentChar)
+		switch lexer.peekCharacter() {
+		case '=':
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{Type: token.MULEQ,
+				Literal: string(character) + string(lexer.currentChar)}
+		default:
+			t = newToken(token.ASTERISK, lexer.currentChar)
+		}
 	case '<':
 		if lexer.peekCharacter() == '=' {
 			character := lexer.currentChar
@@ -132,20 +180,33 @@ func (lexer *Lexer) NextToken() token.Token {
 		}
 
 	case '|':
-		if lexer.peekCharacter() == '>' {
+		switch lexer.peekCharacter() {
+		case '|':
 			character := lexer.currentChar
-
 			lexer.consumeChar()
 
 			t = token.Token{
-				Type:    token.VALUE,
+				Type:    token.OR,
 				Literal: string(character) + string(lexer.currentChar),
 			}
-		} else {
+		default:
+			t = newToken(token.ILLEGAL, lexer.currentChar)
+
+		}
+
+	case '&':
+		switch lexer.peekCharacter() {
+		case '&':
+			character := lexer.currentChar
+			lexer.consumeChar()
+
 			t = token.Token{
-				Type:    token.ILLEGAL,
-				Literal: string(lexer.currentChar),
+				Type:    token.AND,
+				Literal: string(character) + string(lexer.currentChar),
 			}
+		default:
+			t = newToken(token.ILLEGAL, lexer.currentChar)
+
 		}
 
 	case '"':

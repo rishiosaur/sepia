@@ -5,15 +5,15 @@ import (
 	"sepia/token"
 )
 
-type LetStatement struct {
+type ValueStatement struct {
 	Token token.Token
 	Name  *Identifier
 	Value Expression
 }
 
-func (ls *LetStatement) statementNode()       {}
-func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
-func (ls *LetStatement) String() string {
+func (ls *ValueStatement) statementNode()       {}
+func (ls *ValueStatement) TokenLiteral() string { return ls.Token.Literal }
+func (ls *ValueStatement) String() string {
 	var out bytes.Buffer
 
 	out.WriteString(ls.TokenLiteral() + " ")

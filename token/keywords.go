@@ -13,6 +13,8 @@ var keywords = map[string]Type{
 	"end":      CLOSEBLOCK,
 	"update":   UPDATE,
 	"constant": CONSTANT,
+	"and":      AND,
+	"or":       OR,
 }
 
 //LookupIdent finds an identifier token type from a string.

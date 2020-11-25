@@ -31,6 +31,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefixFunction(token.IDENT, p.parseIdentifier)
 	p.registerPrefixFunction(token.INT, p.parseIntegerLiteral)
 	p.registerPrefixFunction(token.BANG, p.parsePrefixExpression)
+	p.registerPrefixFunction(token.INCREMENT, p.parsePrefixExpression)
+	p.registerPrefixFunction(token.DECREMENT, p.parsePrefixExpression)
 	p.registerPrefixFunction(token.MINUS, p.parsePrefixExpression)
 	p.registerPrefixFunction(token.TRUE, p.parseBoolean)
 	p.registerPrefixFunction(token.FALSE, p.parseBoolean)
@@ -45,10 +47,16 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfixFunction(token.MINUS, p.parseInfixExpression)
 	p.registerInfixFunction(token.SLASH, p.parseInfixExpression)
 	p.registerInfixFunction(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfixFunction(token.MINUSEQ, p.parseInfixExpression)
+	p.registerInfixFunction(token.PLUSEQ, p.parseInfixExpression)
+	p.registerInfixFunction(token.MULEQ, p.parseInfixExpression)
+	p.registerInfixFunction(token.SLASHEQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.EQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.NOT_EQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.LT, p.parseInfixExpression)
 	p.registerInfixFunction(token.GT, p.parseInfixExpression)
+	p.registerInfixFunction(token.OR, p.parseInfixExpression)
+	p.registerInfixFunction(token.AND, p.parseInfixExpression)
 	p.registerInfixFunction(token.LTEQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.GTEQ, p.parseInfixExpression)
 	p.registerInfixFunction(token.LPAREN, p.parseCallExpression)
@@ -291,9 +299,9 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 	return stmt
 }
 
-func (p *Parser) parseLetStatement() *ast.LetStatement {
+func (p *Parser) parseLetStatement() *ast.ValueStatement {
 	defer untrace(trace("parseLetStatement"))
-	stmt := &ast.LetStatement{Token: p.currentToken}
+	stmt := &ast.ValueStatement{Token: p.currentToken}
 	if !p.expectPeek(token.IDENT) {
 		return nil
 	}
@@ -334,7 +342,7 @@ func (p *Parser) parseUpdateStatement() *ast.UpdateStatement {
 //
 
 func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
-	defer untrace(trace("parseInfixExpression"))
+	defer untrace(trace("parseInfixExpression:" + p.currentToken.Literal))
 	expression := &ast.InfixExpression{
 		Token:    p.currentToken,
 		Operator: p.currentToken.Literal,
