@@ -10,6 +10,7 @@ const (
 	// Identifiers + literals
 	IDENT = "IDENT" // add, foobar, x, y, ...
 	INT   = "INT"   // 1343456
+	FLOAT = "FLOAT"
 	// Operators
 	ASSIGN = "="
 	PLUS   = "+"
@@ -22,8 +23,8 @@ const (
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
-	LRECT     = "["
-	RRECT     = "]"
+	LBRACKET  = "["
+	RBRACKET  = "]"
 	COLON     = ":"
 	// Keywords
 	FUNCTION   = "FUNCTION"
@@ -50,6 +51,8 @@ const (
 	PLUSEQ     = "+="
 	MULEQ      = "*="
 	SLASHEQ    = "/="
+	OR         = "||"
+	AND        = "&&"
 	OPENBLOCK  = "->"
 	CLOSEBLOCK = "end"
 )
