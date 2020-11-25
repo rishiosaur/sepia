@@ -15,6 +15,7 @@ func identLevel() string {
 func tracePrint(fs string) {
 	// fmt.Printf("%s%s\n", identLevel(), fs)
 	identLevel()
+
 }
 
 func incIdent() { traceLevel = traceLevel + 1 }
