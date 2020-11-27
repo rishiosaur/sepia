@@ -242,3 +242,15 @@ func (hl *MapLiteral) String() string {
 	out.WriteString("}")
 	return out.String()
 }
+
+type MatchExpression struct {
+	Token       token.Token
+	Condition   Expression
+	Expressions map[Expression]Expression
+}
+
+func (ie *MatchExpression) expressionNode()      {}
+func (ie *MatchExpression) TokenLiteral() string { return ie.Token.Literal }
+func (ie *MatchExpression) String() string {
+	return "MatchExpression" // TODO: Strigify
+}

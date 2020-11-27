@@ -1,14 +1,13 @@
 value fibonacci = f(n) ->
+    value z = 0
 
-    if (n == 0) ->
-        return 0;
+    if (n == 1 || n == 2) ->
+        update z = 1
     end
-
-    if (n == 1 or n == 2) ->
-        return 1;
+    else ->
+        update z = fibonacci(n - 1) + fibonacci(n - 2)
     end
-
-    fibonacci(n - 1) + fibonacci(n - 2)
+    z
 end
 
-print(string(fibonacci(5)))
+print(string(fibonacci(32)))

@@ -15,6 +15,8 @@ var keywords = map[string]Type{
 	"constant": CONSTANT,
 	"and":      AND,
 	"or":       OR,
+	"match":    MATCH,
+	"default":  DEFAULT,
 }
 
 //LookupIdent finds an identifier token type from a string.

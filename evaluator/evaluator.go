@@ -5,6 +5,7 @@ import (
 	"sepia/ast"
 	"sepia/objects"
 	"strconv"
+	"time"
 )
 
 func newError(format string, a ...interface{}) *objects.Error {
@@ -110,10 +111,49 @@ func Eval(node ast.Node, machine *objects.Machine) objects.Object {
 		return evalIndexExpression(left, index)
 	case *ast.MapLiteral:
 		return evalMapLiteral(node, machine)
+	case *ast.MatchExpression:
+		return evalMatchExpression(node, machine)
 	default:
 		return newError("I literally have no clue wtf that is. RTFM pls.")
 	}
 	return nil
+}
+
+func evalMatchExpression(node *ast.MatchExpression, machine *objects.Machine) objects.Object {
+
+	condition := Eval(node.Condition, machine)
+
+	var def objects.Object
+	var returns objects.Object
+	time.Sleep(time.Second * 2)
+
+	fmt.Println(fmt.Sprintf("NEW CALL: %#v", condition))
+	fmt.Println(fmt.Sprintf("EVALUATING: %#V", node))
+
+	for k, v := range node.Expressions {
+		evalK := Eval(k, machine)
+		fmt.Println(fmt.Sprintf("EVALLING: %#v", evalK))
+
+		if fmt.Sprintf("%#v", evalK) == fmt.Sprintf("%#v", condition) {
+			fmt.Println("true")
+			returns = Eval(v, machine)
+			break
+		}
+
+		if evalK.Inspect() == "__default__" {
+			def = Eval(v, machine)
+		}
+	}
+
+	if returns != nil {
+		return returns
+	}
+
+	if returns == nil && def != nil {
+		return def
+	}
+
+	return newError("There was no statement for this.")
 }
 
 func evalMapLiteral(node *ast.MapLiteral, machine *objects.Machine) objects.Object {

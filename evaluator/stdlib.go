@@ -166,4 +166,19 @@ var builtins = map[string]*objects.Builtin{
 			return NULL
 		},
 	},
+
+	// "update": &objects.Builtin{
+	// 	Fn: func (args ...objects.Object) objects.Object {
+	// 		if len(args) != 3 {
+	// 			return newError("wrong number of arguments. got=%d, want=3",
+	// 				len(args))
+	// 		}
+
+	// 		switch args[0].(type) {
+	// 		case *objects.Array:
+
+	// 		}
+	// 	},
+	// },
+
 }

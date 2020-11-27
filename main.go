@@ -11,6 +11,7 @@ import (
 	"sepia/objects"
 	"sepia/parser"
 	"sepia/repl"
+	"strings"
 )
 
 func check(e error) {
@@ -32,7 +33,9 @@ func main() {
 		file := os.Args[1]
 
 		_data, err := ioutil.ReadFile(file)
-		check(err)
+		if err != nil || !strings.HasSuffix(file, ".sp") {
+			fmt.Println("START ERROR")
+		}
 		data := string(_data)
 
 		l := lexer.New(data)

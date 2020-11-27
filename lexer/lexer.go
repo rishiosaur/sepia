@@ -142,7 +142,17 @@ func (lexer *Lexer) NextToken() token.Token {
 	case ';':
 		t = newToken(token.SEMICOLON, lexer.currentChar)
 	case ':':
-		t = newToken(token.COLON, lexer.currentChar)
+		if lexer.peekCharacter() == ':' {
+			character := lexer.currentChar
+			lexer.consumeChar()
+
+			t = token.Token{
+				Type:    token.DOUBLECOLON,
+				Literal: string(character) + string(lexer.currentChar),
+			}
+		} else {
+			t = newToken(token.COLON, lexer.currentChar)
+		}
 
 	case '#':
 		for lexer.peekCharacter() != '\n' && lexer.peekCharacter() != 0 {
@@ -194,7 +204,7 @@ func (lexer *Lexer) NextToken() token.Token {
 				Literal: string(character) + string(lexer.currentChar),
 			}
 		default:
-			t = newToken(token.ILLEGAL, lexer.currentChar)
+			t = newToken(token.BAR, lexer.currentChar)
 
 		}
 
