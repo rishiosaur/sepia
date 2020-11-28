@@ -20,16 +20,35 @@ pub enum TokenType {
     RBrace,
 
     Ampersand,
-    DoubleAmpersand,
+    And,
     Equal,
     NotEqual,
     Bar,
-    DoubleBar,
+    Or,
     Assign,
+    Function,
+
+    OpenBlock,
+    EndBlock,
+
+    Plus,
+    Minus,
+    DoublePlus,
+    DoubleMinus,
+    Semicolon,
+    Colon,
+    Period,
+    Asterisk,
+    Slash,
+
 
     True,
     False,
-    Value
+    Value,
+    If,
+    Else,
+    Return,
+
 
 }
 
@@ -42,7 +61,6 @@ pub struct Token {
 #[derive(Debug, Clone)]
 pub enum LexerError {
     UndefinedError(Position),
-    ExpectPeek(Position, TokenType, TokenType)
 }
 
 #[derive(Debug, Clone)]
@@ -140,6 +158,10 @@ impl<'a> Lexer<'a> {
             "true" => TokenType::True,
             "false" => TokenType::False,
             "value" => TokenType::Value,
+            "return" => TokenType::Return,
+            "if" => TokenType::If,
+            "else" => TokenType::Else,
+            "f" => TokenType::Function,
             _ => TokenType::Identifier(owned)
         };
 
@@ -203,6 +225,20 @@ impl<'a> Lexer<'a> {
 
     }
 
+    // pub fn comment(&mut self, block: bool) -> Option<Token> {
+    //     while let Some(ch) = self.get_nth_char(None) {
+    //         match ch {
+    //             "*" => {
+    //                 if block {
+    //                     if let Some(c) = self.peek_char() {
+    //                         if c == ''
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
     pub fn add_error(&mut self, kind: LexerError) -> Option<Token> {
         self.errors.push(kind);
 
@@ -244,11 +280,61 @@ impl<'a> Iterator for Lexer<'a> {
             ']' => self.single_char_tok(TokenType::RBracket),
             '{' => self.single_char_tok(TokenType::LBrace),
             '}' => self.single_char_tok(TokenType::RBrace),
+            ';' => self.single_char_tok(TokenType::Semicolon),
+            '|' => {
+                match peek_character {
+                    Some('|') => self.double_char_tok(TokenType::Or),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Bar),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+
+            '&' => {
+                match peek_character {
+                    Some('&') => self.double_char_tok(TokenType::And),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Bar),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+
+            '+' => {
+                match peek_character {
+                    Some('+') => self.double_char_tok(TokenType::DoublePlus),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Plus),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+
+            '-' => {
+                match peek_character {
+                    Some('-') => self.double_char_tok(TokenType::DoubleMinus),
+                    Some('>') => self.double_char_tok(TokenType::OpenBlock),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Minus),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+
+            '*' => {
+                match peek_character {
+                    Some('-') => self.double_char_tok(TokenType::DoubleMinus),
+                    Some('>') => self.double_char_tok(TokenType::OpenBlock),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Minus),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+
+            '/' => {
+                match peek_character {
+                    // Some('*') => self.double_char_tok(TokenType::OpenBlock),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Slash),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
 
             '=' => {
                 match peek_character {
                     Some('=') => self.double_char_tok(TokenType::Equal),
-                    None | Some(' ') => self.single_char_tok(TokenType::Assign),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Assign),
                     _ => self.add_error(LexerError::UndefinedError(self.literal_position))
                 }
             },
