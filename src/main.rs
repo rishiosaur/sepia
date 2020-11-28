@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate lazy_static;
-
 mod ast;
 mod evaluator;
 mod lexer;
@@ -9,5 +6,11 @@ mod parser;
 mod util;
 
 fn main() {
-    println!("Hello world!")
+    let lex = lexer::Lexer::new(
+        r#"value z = "hello
+waef" 3.45"#);
+
+    let z: Vec<lexer::Token> = lex.collect();
+    println!("{:#?}", z);
+    
 }
