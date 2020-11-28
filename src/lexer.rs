@@ -27,6 +27,7 @@ pub enum TokenType {
     Or,
     Assign,
     Function,
+    Bang,
 
     OpenBlock,
     EndBlock,
@@ -40,6 +41,10 @@ pub enum TokenType {
     Period,
     Asterisk,
     Slash,
+    GT,
+    LT,
+    GTEq,
+    LTEq,
 
 
     True,
@@ -335,6 +340,27 @@ impl<'a> Iterator for Lexer<'a> {
                 match peek_character {
                     Some('=') => self.double_char_tok(TokenType::Equal),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Assign),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+            '!' => {
+                match peek_character {
+                    Some('=') => self.double_char_tok(TokenType::NotEqual),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Bang),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+            '>' => {
+                match peek_character {
+                    Some('=') => self.double_char_tok(TokenType::GTEq),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::GT),
+                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                }
+            },
+            '<' => {
+                match peek_character {
+                    Some('=') => self.double_char_tok(TokenType::LTEq),
+                    None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::LT),
                     _ => self.add_error(LexerError::UndefinedError(self.literal_position))
                 }
             },
