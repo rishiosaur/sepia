@@ -1,3 +1,5 @@
+use ast::base::PrefixExpression;
+
 mod ast;
 mod evaluator;
 mod lexer;
@@ -15,5 +17,7 @@ print(z + x);
 
     let z: Vec<lexer::Token> = lex.collect();
     println!("{:#?}", z);
+
+    
     
 }
