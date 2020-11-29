@@ -11,6 +11,7 @@ pub enum TokenType {
     Integer(usize),
     Float(f64),
     Identifier(String),
+    Boolean(bool),
 
     LBracket,
     RBracket,
@@ -46,9 +47,6 @@ pub enum TokenType {
     GTEq,
     LTEq,
 
-
-    True,
-    False,
     Value,
     If,
     Else,
@@ -56,6 +54,7 @@ pub enum TokenType {
 
 
 }
+
 
 #[derive(Debug)]
 pub struct Token {
@@ -160,13 +159,14 @@ impl<'a> Lexer<'a> {
         }
 
         let kind = match owned.as_str() {
-            "true" => TokenType::True,
-            "false" => TokenType::False,
+            "true" => TokenType::Boolean(true),
+            "false" => TokenType::Boolean(false),
             "value" => TokenType::Value,
             "return" => TokenType::Return,
             "if" => TokenType::If,
             "else" => TokenType::Else,
             "f" => TokenType::Function,
+            "end" => TokenType::EndBlock,
             _ => TokenType::Identifier(owned)
         };
 
