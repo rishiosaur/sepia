@@ -4,7 +4,7 @@ pub struct Position {
     line: usize
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
     //Associated 
     String(String),
@@ -56,10 +56,10 @@ pub enum TokenType {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
-    position: Position,
-    kind: TokenType
+    pub position: Position,
+    pub kind: TokenType
 }
 
 #[derive(Debug, Clone)]
@@ -72,7 +72,6 @@ pub(crate) struct Lexer<'a> {
     input: &'a str,
     literal_position: Position,
     position: usize,
-    errors: Vec<LexerError>
 }
 
 impl<'a> Lexer<'a> {
@@ -208,8 +207,8 @@ impl<'a> Lexer<'a> {
                         position: current_position,
                     }),
                     _ => {
-                        self.add_error(LexerError::UndefinedError(current_position));
-                        None
+                        panic!("[{:?}] LEXER ERROR: Could not parse integer.", current_position);
+                        
                     }
                 }
             },
@@ -220,8 +219,7 @@ impl<'a> Lexer<'a> {
                         position: current_position,
                     }),
                     _ => {
-                        self.add_error(LexerError::UndefinedError(current_position));
-                        None
+                        panic!("[{:?}] LEXER ERROR: Could not parse float.", current_position);
                     }
                 }
             }
@@ -244,16 +242,6 @@ impl<'a> Lexer<'a> {
     //     }
     // }
 
-    pub fn add_error(&mut self, kind: LexerError) -> Option<Token> {
-        self.errors.push(kind);
-
-        None
-    }
-
-    pub fn errors(self) -> Vec<LexerError> {
-        return self.errors.clone();
-    }
-
     pub fn new(input: &'a str) -> Lexer<'a> {
         Self {
             literal_position: Position {
@@ -262,7 +250,6 @@ impl<'a> Lexer<'a> {
             },
             position: 0,
             input: input,
-            errors: Vec::new()
         }
     }
 }
@@ -290,7 +277,7 @@ impl<'a> Iterator for Lexer<'a> {
                 match peek_character {
                     Some('|') => self.double_char_tok(TokenType::Or),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Bar),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
 
@@ -298,7 +285,7 @@ impl<'a> Iterator for Lexer<'a> {
                 match peek_character {
                     Some('&') => self.double_char_tok(TokenType::And),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Bar),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
 
@@ -306,7 +293,7 @@ impl<'a> Iterator for Lexer<'a> {
                 match peek_character {
                     Some('+') => self.double_char_tok(TokenType::DoublePlus),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Plus),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
 
@@ -315,7 +302,7 @@ impl<'a> Iterator for Lexer<'a> {
                     Some('-') => self.double_char_tok(TokenType::DoubleMinus),
                     Some('>') => self.double_char_tok(TokenType::OpenBlock),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Minus),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
 
@@ -324,7 +311,7 @@ impl<'a> Iterator for Lexer<'a> {
                     Some('-') => self.double_char_tok(TokenType::DoubleMinus),
                     Some('>') => self.double_char_tok(TokenType::OpenBlock),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Minus),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
 
@@ -332,7 +319,7 @@ impl<'a> Iterator for Lexer<'a> {
                 match peek_character {
                     // Some('*') => self.double_char_tok(TokenType::OpenBlock),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Slash),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
 
@@ -340,28 +327,28 @@ impl<'a> Iterator for Lexer<'a> {
                 match peek_character {
                     Some('=') => self.double_char_tok(TokenType::Equal),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Assign),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
             '!' => {
                 match peek_character {
                     Some('=') => self.double_char_tok(TokenType::NotEqual),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::Bang),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
             '>' => {
                 match peek_character {
                     Some('=') => self.double_char_tok(TokenType::GTEq),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::GT),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
             '<' => {
                 match peek_character {
                     Some('=') => self.double_char_tok(TokenType::LTEq),
                     None | Some(' ') | Some('\t') | Some('\r') => self.single_char_tok(TokenType::LT),
-                    _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+                    _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
                 }
             },
             '\n' => {
@@ -377,7 +364,7 @@ impl<'a> Iterator for Lexer<'a> {
             '0'..='9' => self.integer(),
             'A'..='Z' | 'a'..='z' | '_' => self.ident(),
             '"' => self.string(),
-            _ => self.add_error(LexerError::UndefinedError(self.literal_position))
+            _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position)
         }
     }
 }
