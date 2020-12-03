@@ -1,12 +1,12 @@
 use crate::lexer::Token;
 
-use super::{statements::BlockStatement, nodes::Expression};
+use super::{nodes::Expression, statements::BlockStatement};
 
 struct IfExpression<'a> {
     token: Token,
     condition: Box<dyn Expression>,
     consequence: &'a BlockStatement,
-    alternative: &'a BlockStatement
+    alternative: &'a BlockStatement,
 }
 
 impl<'a> Expression for IfExpression<'a> {
@@ -22,7 +22,7 @@ impl<'a> Expression for IfExpression<'a> {
 pub struct CallExpression {
     token: Token,
     function: Box<dyn Expression>,
-    arguments: Vec<Box<dyn Expression>>
+    arguments: Vec<Box<dyn Expression>>,
 }
 
 impl Expression for CallExpression {
@@ -34,4 +34,3 @@ impl Expression for CallExpression {
         todo!()
     }
 }
-
