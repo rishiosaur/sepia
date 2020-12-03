@@ -13,11 +13,9 @@ fn main() {
 value z = "hello waef";
 value x = 3.2444;
 print(z + x);
-"#);
+"#,
+    );
 
     let z: Vec<lexer::Token> = lex.collect();
     println!("{:#?}", z);
-
-    
-    
 }
