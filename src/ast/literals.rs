@@ -2,13 +2,13 @@ use std::{collections::HashMap, iter::Map};
 
 use crate::lexer::Token;
 
-use super::{statements::BlockStatement, nodes::Expression};
+use super::{nodes::Expression, statements::BlockStatement};
 
-pub struct Identifier {
-    token: Token
+pub struct IdentifierLiteral {
+    token: Token,
 }
 
-impl Expression for Identifier {
+impl Expression for IdentifierLiteral {
     fn literal(&self) -> String {
         todo!()
     }
@@ -18,10 +18,8 @@ impl Expression for Identifier {
     }
 }
 
-
-
 pub struct StringLiteral {
-    token: Token
+    token: Token,
 }
 
 impl Expression for StringLiteral {
@@ -36,7 +34,7 @@ impl Expression for StringLiteral {
 
 pub struct ArrayLiteral {
     token: Token,
-    elements: Vec<Box<dyn Expression>>
+    elements: Vec<Box<dyn Expression>>,
 }
 
 impl Expression for ArrayLiteral {
@@ -50,7 +48,7 @@ impl Expression for ArrayLiteral {
 }
 
 pub struct BooleanLiteral {
-    token: Token
+    token: Token,
 }
 
 impl Expression for BooleanLiteral {
@@ -63,11 +61,10 @@ impl Expression for BooleanLiteral {
     }
 }
 
-
 pub struct IndexExpression {
     token: Token,
     left: Box<dyn Expression>,
-    index: Box<dyn Expression>
+    index: Box<dyn Expression>,
 }
 
 impl Expression for IndexExpression {
@@ -80,10 +77,9 @@ impl Expression for IndexExpression {
     }
 }
 
-
 pub struct MapLiteral {
     token: Token,
-    pairs: HashMap<Box<dyn Expression>, Box<dyn Expression>>
+    pairs: HashMap<Box<dyn Expression>, Box<dyn Expression>>,
 }
 
 impl Expression for MapLiteral {
@@ -96,11 +92,10 @@ impl Expression for MapLiteral {
     }
 }
 
-
 pub struct FunctionLiteral<'a, 'b> {
     token: Token,
-    parameters: Vec<&'a Identifier>,
-    body: &'b BlockStatement
+    parameters: Vec<&'a IdentifierLiteral>,
+    body: &'b BlockStatement,
 }
 
 impl<'a, 'b> Expression for FunctionLiteral<'a, 'b> {
@@ -114,7 +109,7 @@ impl<'a, 'b> Expression for FunctionLiteral<'a, 'b> {
 }
 
 pub struct IntegerLiteral {
-    token: Token
+    token: Token,
 }
 
 impl Expression for IntegerLiteral {
@@ -127,9 +122,8 @@ impl Expression for IntegerLiteral {
     }
 }
 
-
 pub struct FloatLiteral {
-    token: Token
+    token: Token,
 }
 
 impl Expression for FloatLiteral {
