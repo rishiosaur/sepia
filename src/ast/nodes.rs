@@ -1,4 +1,3 @@
-
 pub trait Node {
     fn literal(&self) -> String;
     fn string(&self) -> String;
@@ -7,17 +6,17 @@ pub trait Node {
 pub trait Expression {
     fn literal(&self) -> String;
     fn string(&self) -> String;
-    fn expressionNode(&self) {  }
+    fn expressionNode(&self) {}
 }
 
 pub trait Statement {
     fn literal(&self) -> String;
     fn string(&self) -> String;
-    fn statementNode(&self) { }
+    fn statementNode(&self) {}
 }
 
 pub struct Program {
-    statements: Vec<Box<dyn Statement>>
+    statements: Vec<Box<dyn Statement>>,
 }
 
 impl Node for Program {
@@ -39,4 +38,3 @@ impl Node for Program {
         owned
     }
 }
-
