@@ -1,4 +1,4 @@
-use ast::base::PrefixExpression;
+use parser::Parser;
 
 mod ast;
 mod evaluator;
@@ -10,12 +10,12 @@ mod util;
 fn main() {
     let lex = lexer::Lexer::new(
         r#"
-value z = "hello waef";
-value x = 3.2444;
-print(z + x);
-"#,
+        1 + 3 + 4 - 2"#,
     );
 
     let z: Vec<lexer::Token> = lex.collect();
     println!("{:#?}", z);
+
+    let mut p = Parser::new(z);
+    println!("{:#?}", p.parseProgram());
 }
