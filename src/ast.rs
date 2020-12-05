@@ -4,7 +4,7 @@ use crate::lexer::Token;
 
 #[derive(Debug, Clone)]
 pub struct Program {
-    statements: Vec<Box< Statement>>,
+    pub statements: Vec<Statement>,
 }
 #[derive(Debug, Clone)]
 pub enum Expression {
@@ -21,8 +21,11 @@ pub enum Expression {
     BooleanLiteral {
         token: Token,
     },
-
+    IntegerLiteral {
+        token: Token,
+    },
     FloatLiteral {
+        
         token: Token,
     },
     IndexExpression {
@@ -66,7 +69,7 @@ pub enum Statement {
     },
     ExpressionStatement {
         token:  Token,
-        statements: Vec<Statement>,
+        expression: Box<Expression>,
     },
     ValueStatement {
         token:  Token,
