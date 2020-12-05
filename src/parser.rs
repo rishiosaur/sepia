@@ -1,14 +1,14 @@
-use crate::{lexer::Token, util::variant_eq};
+use crate::{ast::{Expression, Program, Statement}, lexer::Token, util::variant_eq};
 
 use crate::lexer::TokenType;
 
+#[derive(Debug, Copy, Clone)]
 pub enum Precedence {
     LOWEST = 0,
     AND = 1,
     OR = 2,
     EQUALS = 3,
     LESSGREATER = 4,
-
     SUM = 5,
     PRODUCT = 6,
     PREFIX = 7,
@@ -47,12 +47,12 @@ pub struct Parser {
 }
 
 impl Parser {
-    pub fn current_token(&self) -> Option<&Token> {
-        self.tokens.get(self.position)
+    pub fn current_token(&self) -> Option<Token> {
+        self.tokens.get(self.position).cloned()
     }
 
-    pub fn peek_token(&self) -> Option<&Token> {
-        self.tokens.get(self.position + 1)
+    pub fn peek_token(&self) -> Option<Token> {
+        self.tokens.get(self.position + 1).cloned()
     }
 
     pub fn current_precedence(&self) -> Precedence {
@@ -63,18 +63,32 @@ impl Parser {
     }
 
     pub fn peek_precedence(&self) -> Precedence {
-        match get_precedence(self.peek_token().unwrap().clone().kind) {
-            Some(p) => p,
-            _ => Precedence::LOWEST,
+        if let Some(peek) = self.peek_token() {
+            return match get_precedence(peek.kind) {
+                Some(p) => p,
+                _ => Precedence::LOWEST,
+            };
+        } else {
+            return Precedence::LOWEST;
         }
+        
     }
 
     pub fn current_token_is(&self, kind: &TokenType) -> bool {
-        self.current_token().unwrap().kind == *kind
+        if let Some(peek) = self.current_token() {
+            return peek.kind == *kind;
+        } else {
+            return false;
+        }
     }
 
     pub fn peek_token_is(&self, kind: &TokenType) -> bool {
-        self.peek_token().unwrap().kind == *kind
+        
+        if let Some(peek) = self.peek_token() {
+            return peek.kind == *kind;
+        } else {
+            return false;
+        }
     }
 
     pub fn expect_peek(&mut self, kind: &TokenType) -> bool {
@@ -93,9 +107,196 @@ impl Parser {
 
     pub fn consume_token(&mut self) {
         self.position += 1;
+        
     }
 
-    pub fn new() -> Parser {
+    pub fn new(tokens: Vec<Token>) -> Parser {
+        Parser {
+            tokens,
+            position: 0,
+        }
+    }
 
+    pub fn parseProgram(&mut self) -> Program {
+        let mut statements = Vec::<Statement>::new();
+
+        while self.position < self.tokens.len() {
+            statements.push(self.parseStatement());
+        }
+
+        Program {
+            statements
+        }
+    }
+
+    fn parseStatement(&mut self) -> Statement {
+        
+        match self.current_token().unwrap().kind {
+            // TokenType::Value => self.parseValueStatement(),
+            // TokenType::Update => self.parseUpdateStatement(),
+            TokenType::Return => self.parseReturnStatement(),
+            _ => self.parseExpressionStatement()
+        }
+    }
+
+    fn parseReturnStatement(&mut self) -> Statement {
+        let token = self.current_token().unwrap();
+
+        self.consume_token();
+
+        let value = self.parseExpression(Precedence::LOWEST);
+
+        Statement::ReturnStatement {
+            value,
+            token
+        }
+    }
+
+    fn parseExpressionStatement(&mut self) -> Statement {
+
+        let token = self.current_token().unwrap();
+        let expression = self.parseExpression(Precedence::LOWEST);
+        
+
+        if self.current_token_is(&TokenType::Semicolon) {
+            self.consume_token();
+        }
+
+        Statement::ExpressionStatement {
+            expression,
+            token
+        }
+    }
+
+    fn parseExpression(&mut self, precedence: Precedence) -> Box<Expression> {
+
+        let mut left = self.matchPrefixExpression(self.current_token().unwrap().kind);
+
+        while !self.peek_token_is(&TokenType::Semicolon)
+            && int_precedence(precedence) < int_precedence(self.peek_precedence())
+        {
+            println!("PEEK: {:?}", self.peek_token());
+            if let Some(peek_kind) = self.peek_token() {
+                match self.checkInfixExpression(&peek_kind.kind) {
+                    true => {
+                        self.consume_token();
+                        left = self.matchInfixExpression(peek_kind.kind, left.clone()).unwrap();
+                        break;
+                    },
+                    false => {
+                        break;
+                    }
+                }
+            } else {
+                break;
+            }
+            
+        }
+
+        println!("LEFT EXP {:?}", left);
+
+        return left;
+    }
+
+    // Prefix/Infixes
+
+    fn matchPrefixExpression(&mut self, kind: TokenType) -> Box<Expression> {
+        match kind {
+            TokenType::Integer(_) => self.parseIntegerExpression(),
+            TokenType::Float(_) => self.parseFloatExpression(),
+            TokenType::String(_) => self.parseStringExpression(),
+            TokenType::Boolean(_) => self.parseBooleanExpression(),
+            // TokenType::Identifier(_) => self.parseIdentifierExpression(),
+            // TokenType::Minus => self.parsePrefixExpression(),
+            _ => panic!(
+                "[{}] PARSER ERROR: NO PREFIX FUNCTION FOUND FOR {:?}",
+                self.position, kind
+            ),
+        }
+    }
+
+    fn parseBooleanExpression(&self) -> Box<Expression> {
+        Box::new(Expression::BooleanLiteral {
+            token: self.current_token().unwrap(),
+        })
+    }
+
+    fn parseIntegerExpression(&self) -> Box<Expression> {
+        // println!("Int");
+        Box::new(Expression::IntegerLiteral {
+            token: self.current_token().unwrap(),
+        })
+    }
+
+    fn parseFloatExpression(&self) -> Box<Expression> {
+        // println!("Int");
+        Box::new(Expression::FloatLiteral {
+            token: self.current_token().unwrap(),
+        })
+    }
+
+
+    fn parseStringExpression(&self) -> Box<Expression> {
+        Box::new(Expression::StringLiteral {
+            token: self.current_token().unwrap(),
+        })
+    }
+
+    fn checkInfixExpression(&self, kind: &TokenType) -> bool {
+        match *kind {
+            TokenType::Plus => true,
+            TokenType::Minus => true,
+            TokenType::Asterisk => true,
+            TokenType::Slash => true,
+            TokenType::Equal => true,
+            TokenType::NotEqual => true,
+            TokenType::LT => true,
+            TokenType::GT => true,
+            TokenType::LTEq => true,
+            TokenType::GTEq => true,
+            _ => false,
+        }
+    }
+
+    fn matchInfixExpression(
+        &mut self,
+        kind: TokenType,
+        leftExpression: Box<Expression>,
+    ) -> Option<Box<Expression>> {
+        println!("PARSING INFIX WITH LEFT: {:?}", leftExpression);
+        match kind {
+            TokenType::Plus => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::Minus => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::Asterisk => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::Slash => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::Equal => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::NotEqual => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::LT => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::GT => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::LTEq => Some(self.parseInfixExpression(leftExpression)),
+            TokenType::GTEq => Some(self.parseInfixExpression(leftExpression)),
+            _ => None,
+        }
+    }
+
+    fn parseInfixExpression(&mut self, left: Box<Expression>) -> Box<Expression> {
+        
+        
+        let tok = self.current_token().unwrap();
+
+        let precedence = self.current_precedence();
+        self.consume_token();
+
+        println!("----PARSING RIGHT, current tok: {:?}", self.current_token());
+        
+        let right = self.parseExpression(precedence);
+        // self.consume_token();
+
+        Box::new(Expression::InfixExpression {
+            token: tok,
+            
+            right,
+            left,
+        })
     }
 }
