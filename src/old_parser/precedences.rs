@@ -11,7 +11,7 @@ pub enum Precedence {
     PRODUCT = 6,
     PREFIX = 7,
     CALL = 8,
-    INDEX = 9
+    INDEX = 9,
 }
 
 pub fn get_precedence(kind: TokenType) -> Option<Precedence> {
@@ -30,10 +30,10 @@ pub fn get_precedence(kind: TokenType) -> Option<Precedence> {
         TokenType::Slash => Some(Precedence::PRODUCT),
         TokenType::LParen => Some(Precedence::CALL),
         TokenType::LBracket => Some(Precedence::INDEX),
-        _ => None
+        _ => None,
     }
 }
 
-pub fn int_precedence (precedence: Precedence) -> usize {
+pub fn int_precedence(precedence: Precedence) -> usize {
     precedence as usize
 }

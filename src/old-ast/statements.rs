@@ -1,10 +1,13 @@
 use crate::lexer::Token;
 
-use super::{literals::Identifier, nodes::{Expression, Statement}};
+use super::{
+    literals::IdentifierLiteral,
+    nodes::{Expression, Statement},
+};
 
 pub struct BlockStatement {
     token: Token,
-    statements: Vec<Box<dyn Statement>>
+    statements: Vec<Box<dyn Statement>>,
 }
 
 impl Statement for BlockStatement {
@@ -19,7 +22,7 @@ impl Statement for BlockStatement {
 
 pub struct ExpressionStatement {
     token: Token,
-    expression: Box<dyn Expression>
+    expression: Box<dyn Expression>,
 }
 
 impl Statement for ExpressionStatement {
@@ -32,13 +35,13 @@ impl Statement for ExpressionStatement {
     }
 }
 
-pub struct ValueStatement<'a> {
+pub struct ValueStatement {
     token: Token,
-    name: &'a Identifier,
-    value: Box<dyn Expression>
+    name: IdentifierLiteral,
+    value: Box<dyn Expression>,
 }
 
-impl<'a> Statement for ValueStatement<'a> {
+impl<'a> Statement for ValueStatement {
     fn literal(&self) -> String {
         todo!()
     }
@@ -48,13 +51,13 @@ impl<'a> Statement for ValueStatement<'a> {
     }
 }
 
-pub struct UpdateStatement<'a> {
+pub struct UpdateStatement {
     token: Token,
-    name: &'a Identifier,
-    value: Box<dyn Expression>
+    name: IdentifierLiteral,
+    value: Box<dyn Expression>,
 }
 
-impl<'a> Statement for UpdateStatement<'a> {
+impl<'a> Statement for UpdateStatement {
     fn literal(&self) -> String {
         todo!()
     }
@@ -63,11 +66,10 @@ impl<'a> Statement for UpdateStatement<'a> {
         todo!()
     }
 }
-
 
 pub struct ReturnStatement {
     token: Token,
-    value: Box<dyn Expression>
+    value: Box<dyn Expression>,
 }
 
 impl Statement for ReturnStatement {
