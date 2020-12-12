@@ -7,7 +7,7 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/rishiosaur/sepia?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/rishiosaur/sepia?style=flat-square)
 
-A minimal functional programming language.
+A minimal, extremely opinionated, functional programming language.
 
 ## Installation
 
