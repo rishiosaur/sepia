@@ -1,4 +1,8 @@
-use crate::{ast::{Expression, Program, Statement}, lexer::Token, util::variant_eq};
+use crate::{
+    ast::{Expression, Program, Statement},
+    lexer::Token,
+    util::variant_eq,
+};
 
 use crate::lexer::TokenType;
 
@@ -40,7 +44,6 @@ pub fn int_precedence(precedence: Precedence) -> usize {
     precedence as usize
 }
 
-
 pub struct Parser {
     pub tokens: Vec<Token>,
     pub position: usize,
@@ -71,7 +74,6 @@ impl Parser {
         } else {
             return Precedence::LOWEST;
         }
-        
     }
 
     pub fn current_token_is(&self, kind: &TokenType) -> bool {
@@ -83,7 +85,6 @@ impl Parser {
     }
 
     pub fn peek_token_is(&self, kind: &TokenType) -> bool {
-        
         if let Some(peek) = self.peek_token() {
             return peek.kind == *kind;
         } else {
@@ -107,7 +108,6 @@ impl Parser {
 
     pub fn consume_token(&mut self) {
         self.position += 1;
-        
     }
 
     pub fn new(tokens: Vec<Token>) -> Parser {
@@ -124,18 +124,15 @@ impl Parser {
             statements.push(self.parseStatement());
         }
 
-        Program {
-            statements
-        }
+        Program { statements }
     }
 
     fn parseStatement(&mut self) -> Statement {
-        
         match self.current_token().unwrap().kind {
             // TokenType::Value => self.parseValueStatement(),
             // TokenType::Update => self.parseUpdateStatement(),
             TokenType::Return => self.parseReturnStatement(),
-            _ => self.parseExpressionStatement()
+            _ => self.parseExpressionStatement(),
         }
     }
 
@@ -146,30 +143,21 @@ impl Parser {
 
         let value = self.parseExpression(Precedence::LOWEST);
 
-        Statement::ReturnStatement {
-            value,
-            token
-        }
+        Statement::ReturnStatement { value, token }
     }
 
     fn parseExpressionStatement(&mut self) -> Statement {
-
         let token = self.current_token().unwrap();
         let expression = self.parseExpression(Precedence::LOWEST);
-        
 
         if self.current_token_is(&TokenType::Semicolon) {
             self.consume_token();
         }
 
-        Statement::ExpressionStatement {
-            expression,
-            token
-        }
+        Statement::ExpressionStatement { expression, token }
     }
 
     fn parseExpression(&mut self, precedence: Precedence) -> Box<Expression> {
-
         let mut left = self.matchPrefixExpression(self.current_token().unwrap().kind);
 
         while !self.peek_token_is(&TokenType::Semicolon)
@@ -180,9 +168,11 @@ impl Parser {
                 match self.checkInfixExpression(&peek_kind.kind) {
                     true => {
                         self.consume_token();
-                        left = self.matchInfixExpression(peek_kind.kind, left.clone()).unwrap();
+                        left = self
+                            .matchInfixExpression(peek_kind.kind, left.clone())
+                            .unwrap();
                         break;
-                    },
+                    }
                     false => {
                         break;
                     }
@@ -190,7 +180,6 @@ impl Parser {
             } else {
                 break;
             }
-            
         }
 
         println!("LEFT EXP {:?}", left);
@@ -234,7 +223,6 @@ impl Parser {
             token: self.current_token().unwrap(),
         })
     }
-
 
     fn parseStringExpression(&self) -> Box<Expression> {
         Box::new(Expression::StringLiteral {
@@ -280,21 +268,19 @@ impl Parser {
     }
 
     fn parseInfixExpression(&mut self, left: Box<Expression>) -> Box<Expression> {
-        
-        
         let tok = self.current_token().unwrap();
 
         let precedence = self.current_precedence();
         self.consume_token();
 
         println!("----PARSING RIGHT, current tok: {:?}", self.current_token());
-        
+
         let right = self.parseExpression(precedence);
         // self.consume_token();
 
         Box::new(Expression::InfixExpression {
             token: tok,
-            
+
             right,
             left,
         })
