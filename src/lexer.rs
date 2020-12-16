@@ -300,7 +300,7 @@ impl<'a> Iterator for Lexer<'a> {
                 Some('-') => self.double_char_tok(TokenType::DoubleMinus),
                 Some('>') => self.double_char_tok(TokenType::OpenBlock),
                 None | Some(' ') | Some('\t') | Some('\r') => {
-                    self.single_char_tok(TokenType::Minus)
+                    self.single_char_tok(TokenType::Asterisk)
                 }
                 _ => panic!("[{:?}] LEXER ERROR: Undefined token", self.literal_position),
             },
